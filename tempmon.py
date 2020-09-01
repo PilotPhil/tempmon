@@ -16,6 +16,7 @@ TODO:
 - [DONE. INCONSISTENT.] send notifications to phone to warn of high temps (notify.run)
     - [DONE] add checkbox to show whether warning has cleared or not
     - add value picker to change threshold
+        - add config_writer() to save threshold
     - [DONE] add config reader for persistent threshold setting
         - convert config_reader() from plaintext to JSON
 '''
