@@ -3,7 +3,7 @@
 NOTE: Must be run as admin
 
 TODO:
-- implement button to reset plot
+- [DONE] implement button to reset plot
 - [DONE] implement button to reset max values
 - implement popup to warn of high temps
 - add current temp to plot, at plot point
