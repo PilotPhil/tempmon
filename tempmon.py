@@ -39,6 +39,9 @@ set_main_window_size(800, 400)
 # Show logger
 show_logger()
 
+# Define config file location
+config_file = r'assets/config.txt'
+
 # define plot and table names
 myplot = "CPU and GPU Temperatures"
 mytable = "Current Temps"
@@ -50,7 +53,7 @@ add_data("frameCount", 0)
 add_data("timeCounter", get_total_time())
 add_data("maxCPU", 0)
 add_data("maxGPU", 0)
-add_data("threshold", 90.0)
+add_data("threshold", config_reader(config_file))
 
 # begin left panel
 add_group("Left Panel", width=200)
@@ -189,9 +192,10 @@ def thresh_check(threshold: float, temps: dict) -> None:
             log("Threshold check cleared.")
             add_data("is_warning_cleared", True)
 
-def config_reader() -> float:
-    with open(config_file, 'r') as file:
-        config = file.read()
+def config_reader(file) -> float:
+    with open(file, 'r') as f:
+        threshold = f.read()
+    return threshold
 
 
 # and kick it off.
