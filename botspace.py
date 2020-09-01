@@ -16,7 +16,16 @@ load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
 GUILD = os.getenv('DISCORD_GUILD')
 
+# Initialize client and bot
+client = discord.Client()
 bot = commands.Bot(command_prefix='!')
+
+# Some channel IDs
+chan_general = "750319399839465515"
+chan_botvoice = 750354502137282641
+
+
+##### Bot Commands
 
 @bot.command(name='temp', help='retrieve current temp from TempMon')
 async def send_current_temp(ctx, *args):
@@ -37,24 +46,31 @@ async def on_command_error(ctx, error):
     if isinstance(error, commands.errors.CheckFailure):
         await ctx.send('You do not have the correct role for this command.')
 
-# @bot.event
-# async def on_message(message):
-#     if message.author == client.user:
-#         return
+##### Client Events
+
+@client.event
+async def on_ready():
+    channel = client.channels.get(chan_botvoice)
+    channel.send("Connected!")
+    client.channels.get(chan_botvoice).send("Connected!")
+
+@client.event
+async def on_message(message):
+    if message.author == client.user:
+        return
     
-#     if message.content == '!get temp':
-#         response = "We're getting there."
-#         await message.channel.send(response)
-#     elif message.content == 'raise-exception':
-#         raise discord.DiscordException
+    if message.content == '!get temp':
+        response = "We're getting there."
+        await message.channel.send(response)
+    elif message.content == 'raise-exception':
+        raise discord.DiscordException
 
-# @bot.event
-# async def on_error(event, *args, **kwargs):
-#     with open('err.log', 'a') as f:
-#         if event == 'on_message':
-#             f.write(f'Unhandled message: {args[0]}\n')
-#         else:
-#             raise
-
+@client.event
+async def on_error(event, *args, **kwargs):
+    with open('err.log', 'a') as f:
+        if event == 'on_message':
+            f.write(f'Unhandled message: {args[0]}\n')
+        else:
+            raise
 
 bot.run(TOKEN)
