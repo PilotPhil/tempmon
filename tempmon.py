@@ -1,24 +1,7 @@
 '''A simple GUI to monitor CPU and GPU core temperatures
 
-NOTE: Must be run as admin
+NOTE: Must be run as admin. Execute run_tempmon.ps1 for automatic UAC prompt
 
-TODO:
-- [DONE] implement button to reset plot
-- [DONE] implement button to reset max values
-- implement popup to warn of high temps
-- add current temp to plot, at plot point
-- add historical temp when mousing over plot
-- convert x-axis value from total_running_time to the actual time
-- [DONE] add to Github
-- add view for fan speed
-- add other system sensors
-- show time and time since highest recorded temperature
-- [DONE. INCONSISTENT.] send notifications to phone to warn of high temps (notify.run)
-    - [DONE] add checkbox to show whether warning has cleared or not
-    - add value picker to change threshold
-        - add config_writer() to save threshold
-    - [DONE] add config reader for persistent threshold setting
-        - convert config_reader() from plaintext to JSON
 '''
 
 from dearpygui.dearpygui import *
