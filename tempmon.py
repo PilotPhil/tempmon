@@ -9,22 +9,35 @@ TODO:
 - add current temp to plot, at plot point
 - add historical temp when mousing over plot
 - convert x-axis value from total_running_time to the actual time
-- add to Github
+- [DONE] add to Github
 - add view for fan speed
 - add other system sensors
 - show time and time since highest recorded temperature
+- send notifications to phone to warn of high temps (notify.run)
+    - add checkbox to show whether warning has cleared or not
+    - add value picker to change threshold
+    - add config reader for persistent threshold setting
+        - convert config_reader() from plaintext to JSON
 '''
 
 from dearpygui.dearpygui import *
 from ohm_handler import *
 from time import sleep, time
+from notify_run import Notify
+
 
 # initialize OpenHardwareMonitor
 handle = init_ohm()
 
+# initialize Notify.run
+notif = Notify()
+
 # Some window formality
 set_main_window_title("TempMon")
 set_main_window_size(800, 400)
+
+# Show logger
+show_logger()
 
 # define plot and table names
 myplot = "CPU and GPU Temperatures"
@@ -37,6 +50,7 @@ add_data("frameCount", 0)
 add_data("timeCounter", get_total_time())
 add_data("maxCPU", 0)
 add_data("maxGPU", 0)
+add_data("threshold", 90.0)
 
 # begin left panel
 add_group("Left Panel", width=200)
@@ -141,14 +155,44 @@ def plot_callback(sender, data):
         if current_gpu > get_data("maxGPU"):
             add_data("maxGPU", current_gpu)
             set_table_item(mytable,1,2,(str(int(current_gpu))))
-
         
+        # check if temp is above threshold and send a notification if so
+        threshold = get_data("threshold")
+        temps = {'CPU' : current_cpu, 'GPU' : current_gpu}
+        thresh_check(threshold, temps)
 
         # update DPG register with all updated data
         add_data("frameCount", frame_count)
         add_data("CPU Temp", cpu_data) 
         add_data("GPU Temp", gpu_data) 
         add_data("timeCounter", get_total_time())
+
+def thresh_check(threshold: float, temps: dict) -> None:
+    """Check temperature against threshold. Send notification if out of range.
+    
+    Args:
+        threshold (float):
+            The value to be checked against. If temp is higher, a notification will be sent.
+        temps (dict): 
+            requires a dictionary of format {sensor(str), temperature(float)}
+    """
+    for sensor, value in temps:
+        if value > threshold:
+            # check if temperature has gone below threshold since last notification
+            warning_cleared = get_data("is_warning_cleared")
+            if warning_cleared:
+                notif_string = f"Temp Warning: {sensor} at {value}\u00B0C"
+                notif.send(notif_string, " ")
+                log_warning(notif_string)
+                add_data("is_warning_cleared", False)
+        else:
+            log("Threshold check cleared.")
+            add_data("is_warning_cleared", True)
+
+def config_reader() -> float:
+    with open(config_file, 'r') as file:
+        config = file.read()
+
 
 # and kick it off.
 start_dearpygui()
