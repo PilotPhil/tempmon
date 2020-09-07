@@ -4,14 +4,14 @@ class Iconfig_interface():
 
 class config_reader(Iconfig_interface):    
     # define config readers and writers
-    def conread(self) -> float:
+    def read(self) -> float:
         """Read file, return a float"""
         with open(self.config_file, 'r') as f:
             threshold = f.read()
         return float(threshold)
 
 class config_writer(Iconfig_interface):
-    def conwrite(self, value: float) -> None:
+    def write(self, value: float) -> None:
         '''Write config value to file'''
         with open(self.config_file, "w") as f:
             f.write(str(value))
