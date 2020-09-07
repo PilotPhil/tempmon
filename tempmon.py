@@ -5,13 +5,14 @@ NOTE: Must be run as admin. Execute run_tempmon.ps1 for automatic UAC prompt
 '''
 
 from dearpygui.dearpygui import *
-from ohm_handler import *
+# from ohm_handler import *
+import ohm_helper
 from time import sleep, time
 from notify_run import Notify
 
 
 # initialize OpenHardwareMonitor
-handle = init_ohm()
+ohm = ohm_helper.ohm_helper()
 
 # initialize Notify.run
 notif = Notify()
@@ -98,7 +99,7 @@ set_plot_xlimits(myplot, 0, 100)
 set_plot_ylimits(myplot, 0, 100)
 
 # assign render callback to the plot window
-set_render_callback("plot_callback")
+set_render_callback("my_gui.plot_callback")
 
 # theme changer combo box and necessary callback
 set_theme("Gold")
@@ -146,7 +147,7 @@ def plot_callback(sender, data):
         frame_count+=1
         
         #grab current CPU and GPU temp
-        current_cpu, current_gpu = cpu_temp(handle), gpu_temp(handle)
+        current_cpu, current_gpu = ohm.get_cpu(), ohm.get_gpu()
 
         cpu_data = get_data("CPU Temp") # Pull DearPyGui register data into local list variable
         cpu_data.append([frame_count, current_cpu]) # Adds current temp to list, paired with frame count

@@ -67,17 +67,19 @@ def gpu_temp(handle):
             if sensor.Hardware.HardwareType == ohm_hwtypes.index('GpuNvidia') and sensor.SensorType == ohm_sensortypes.index('Temperature'):
                 return float(sensor.Value)
 
+# ************** DEPRECRATED **************
+'''
 def print_all_sensors(handle):
     """Print all sensor data."""
     for i in handle.Hardware:
         i.Update()
         for sensor in i.Sensors:
-            print(f'''
+            print(f"""
 {ohm_hwtypes[sensor.Hardware.HardwareType] = }
 {ohm_sensortypes[sensor.SensorType] = }
 {sensor.Name = }
 {sensor.Value = }
-{sensor.Index = }''')
+{sensor.Index = }""")
 
 # Original functions
 # NOTE: all deprecated.
@@ -97,4 +99,6 @@ def parse_sensor(sensor):
     """DEPECRECATED - Return temperature values"""
     if sensor.Value is not None:
         if sensor.SensorType == ohm_sensortypes.index('Temperature'):
-            print(u"%s %s Temperature Sensor #%i %s - %s\u00B0C" % (ohm_hwtypes[sensor.Hardware.HardwareType], sensor.Hardware.Name, sensor.Index, sensor.Name, sensor.Value))
+            print(u"%s %s Temperature Sensor #%i %s - %s\u00B0C" % (ohm_hwtypes[sensor.Hardware.HardwareType], sensor.Hardware.Nam00
+'''
+# ************** END DEPRECRATED **************
