@@ -1,19 +1,8 @@
-import ctypes # for UAC checking
 from dearpygui.dearpygui import *
 from dearpygui.wrappers import *
-import ohm_helper
-from config_helper import *
-from elevate import elevate
 
-# ensure elevated status
-if ctypes.windll.shell32.IsUserAnAdmin() == True:
-    pass
-else:
-    elevate()
-
-# initialize OpenHardwareMonitor helper and config helper
+# initialize OpenHardwareMonitor
 ohm = ohm_helper.ohm_helper()
-reader = config_reader()
 
 # Some window formality
 set_main_window_title("TempMon")
@@ -26,13 +15,6 @@ set_log_level(2)
 myplot = "CPU and GPU Temperatures"
 mytable = "Current Temps"
 
-# define theme names and logger levels
-themes = ["Dark", "Light", "Classic", "Dark 2", "Grey", "Dark Grey", "Cherry", "Purple", "Gold", "Red"]
-log_levels = ["Trace", "Debug", "Info", "Warning", "Error", "Off"]
-
-# and why not set the theme right away, while we're at it.
-set_theme("Gold")
-
 # define DPG data
 add_data("CPU Temp", [])
 add_data("GPU Temp", [])
@@ -40,41 +22,59 @@ add_data("frameCount", 0)
 add_data("timeCounter", get_total_time())
 add_data("maxCPU", 0)
 add_data("maxGPU", 0)
-add_data("threshold", reader.read())
+add_data("threshold", config_reader(config_file))
 add_data("is_warning_cleared", True)
 
-with menu_bar("Menu Bar"):
-    
-    with menu("Theme"):
-        add_combo(" ##Themes", themes, default_value="Gold", callback="applyTheme") # theme selector
+# begin left panel
+add_group("Left Panel", width=200)
 
-    with menu("Actions"):
-        add_button("Reset Max", callback="reset_max") # resets max temp records to 0
-        add_button("Reset Plot", callback="reset_plot") # resets plot
-
-    with menu("Log Level"):
-        add_radio_button("Log Level##logging", log_levels, callback="set_logger_level", default_value=2) # logger level selector
-        add_button("Show Logger", callback="show_logger_callback") # shows logger
+# theme changer combo box and necessary callback
+set_theme("Gold")
+themes = ["Dark", "Light", "Classic", "Dark 2", "Grey", "Dark Grey", "Cherry", "Purple", "Gold", "Red"]
+add_combo(" ##Themes", themes, default_value="Gold", callback="applyTheme", parent="Left Panel", before="Table Window")
 
 
-# begin left panel for table and buttons
-with group("Left Panel", width=200):
-    with child("Table Window", height=75, border=False):
-        add_table(mytable, ["","Intel", "NVIDIA"])
-        add_row(mytable, ["Current:", 0, 0])
-        add_row(mytable, ["Max:", 0, 0])
-    
-    add_checkbox("Warning Cleared?", data_source="is_warning_cleared", callback="warning_manually_toggled")  # indicates if temperature warning has cleared
+# add table to display current and max temp
+# and confine to a child group to restrict height
+add_child("Table Window", height=75, border=False)
+add_table(mytable, ["","Intel", "NVIDIA"])
+add_row(mytable, ["Current:", 0, 0])
+add_row(mytable, ["Max:", 0, 0])
+end()
 
-# to align plot
+# add a button to reset max temp records to 0
+add_button("Reset Max", callback="reset_max")
+
+# add a button to rest plot
+add_button("Reset Plot", callback="reset_plot")
+
+# add a button to show logger
+add_button("Show Logger", callback="show_logger_callback")
+
+# add a docs button
+add_button("Show Docs", callback="show_documentation")
+
+# add checkbox to indicate if temp warning has cleared
+add_checkbox("Warning Cleared?", data_source="is_warning_cleared", callback="warning_manually_toggled")
+
+# add logger level combo box
+log_levels = ["Trace", "Debug", "Info", "Warning", "Error", "Off"]
+add_radio_button("Log Level##logging", log_levels, callback="set_logger_level", default_value=2)
+
+# end left panel
+end()
+
+
+# add plot within a window
 add_same_line()
-
-# add plot
+add("Right Panel")
 add_plot(myplot, "Time", "Temp")
+end()
 
 # set plot limits
 set_plot_xlimits(myplot, 0, 100)
 set_plot_ylimits(myplot, 0, 100)
+
 
 def applyTheme(sender, data):
     theme = get_value(" ##Themes")
@@ -82,6 +82,7 @@ def applyTheme(sender, data):
 
 def set_logger_level(sender, data):
     level = get_value("Log Level##logging")
+    print(level)
     set_log_level(level)
 
 def reset_max(sender, data):
@@ -178,8 +179,8 @@ def thresh_check(threshold: float, temps: dict) -> None:
             # check if temperature has gone below threshold since last notification
             
             if warning_cleared:
-                # notif_string = f"Temp Warning: {sensor} at {value}\u00B0C"
-                # notif.send(notif_string, " ")
+                notif_string = f"Temp Warning: {sensor} at {value}\u00B0C"
+                notif.send(notif_string, " ")
                 log_warning(notif_string)
                 add_data("is_warning_cleared", False)
                 warning_cleared = True
@@ -191,9 +192,6 @@ def thresh_check(threshold: float, temps: dict) -> None:
                 log_info("Warning cleared by system.")
             add_data("is_warning_cleared", True)
             warning_cleared = True
-
-# set our render callbaaaack
-set_render_callback("plot_callback")
 
 # and kick it off.
 start_dearpygui()
