@@ -18,6 +18,8 @@ reader = config_reader()
 # Some window formality
 set_main_window_title("TempMon")
 set_main_window_size(800, 400)
+set_item_height("logger##standard", 300)
+set_window_pos("logger##standard", 250, 30)
 
 # Set logger level to "Info"
 set_log_level(2)
@@ -128,7 +130,6 @@ def plot_callback(sender, data):
         if len(gpu_data) > 100: del gpu_data[0] # Keep list size under 50
 
         # update plot
-        clear_plot(myplot)
         add_line_series(myplot, "Intel", cpu_data, color=[0,0,255,255])
         add_line_series(myplot, "NVIDIA", gpu_data, color=[0,255,0,255])
 
