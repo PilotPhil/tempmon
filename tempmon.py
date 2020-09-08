@@ -179,7 +179,7 @@ def thresh_check(threshold: float, temps: dict) -> None:
             # check if temperature has gone below threshold since last notification
             
             if warning_cleared:
-                # notif_string = f"Temp Warning: {sensor} at {value}\u00B0C"
+                notif_string = f"Temp Warning: {sensor} at {value}\u00B0C"
                 # notif.send(notif_string, " ")
                 log_warning(notif_string)
                 add_data("is_warning_cleared", False)
