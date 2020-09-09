@@ -1,14 +1,15 @@
-
+import os
 import clr #package pythonnet, not clr
 
-class ohm_helper():
+
+class helper():
     
     # Define hardware and sensor types for use in later functions. Order matters.
     ohm_hwtypes = ['Mainboard','SuperIO','CPU','RAM','GpuNvidia','GpuAti','TBalancer','Heatmaster','HDD']
     ohm_sensortypes = ['Voltage','Clock','Temperature','Load','Fan','Flow','Control','Level','Factor','Power','Data','SmallData']
     handle = None
 
-    def __init__(self, file = r'C:\Users\caden\source\playground\tempmon\OpenHardwareMonitorLib.dll', 
+    def __init__(self, file = os.path.join(os.path.dirname(__file__), r'OpenHardwareMonitorLib.dll'), 
                 MainboardEnabled = False, 
                 CPUEnabled = True, 
                 RAMEnabled = False, 
