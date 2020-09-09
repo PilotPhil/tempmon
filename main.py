@@ -5,22 +5,21 @@ import gui # private module for GUI control
 import tmsettings
 
 # ensure elevated status
-if ctypes.windll.shell32.IsUserAnAdmin() == True:
+if ctypes.windll.shell32.IsUserAnAdmin():
     pass
 else:
     elevate()
     # make sure it was successful.
-    if ctypes.windll.shell32.IsUserAnAdmin() == True:
+    if ctypes.windll.shell32.IsUserAnAdmin():
         print("Elevation successful.")
     else:
         print("Elevation failed.")
         print("Exiting with sys code: 1")
         sys.exit(1)
 
-# Need to read my config here and pass it to my gui
-# ...but how do I pass it back?
+# Reading my config here and passing values to my gui as a dictionary
+# ...but how do I pass it back to the settings writer?
 # hm...
-
 settings = tmsettings.settings()
 
 # Initialize gui and make handler
