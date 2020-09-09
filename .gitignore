@@ -1,5 +1,4 @@
 .env
 .vscode/
 __pycache__/
-.pyc
-__pycache__/config_helper.cpython-38.pyc
+__pycache__/*
