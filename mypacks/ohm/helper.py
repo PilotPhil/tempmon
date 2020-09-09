@@ -46,18 +46,24 @@ class helper():
         self.handle.HDDEnabled = HDDEnabled
         self.handle.Open()
 
-    def get_cpu(self):
+    def get_cpu(self) -> float:
         """Return current combined CPU Package temperature in Celsius."""
         for i in self.handle.Hardware:
             i.Update()
             for sensor in i.Sensors:
                 if sensor.Name == 'CPU Package':
-                    return float(sensor.Value)
+                    if sensor.Value != None:
+                        return float(sensor.Value)
+                    else:
+                        return 0.0
                 
-    def get_gpu(self):
+    def get_gpu(self) -> float:
         """Return current GPU Core temperate in Celsius"""
         for i in self.handle.Hardware:
             i.Update()
             for sensor in i.Sensors:
                 if sensor.Hardware.HardwareType == self.ohm_hwtypes.index('GpuNvidia') and sensor.SensorType == self.ohm_sensortypes.index('Temperature'):
-                    return float(sensor.Value)
+                    if sensor.Value != None:
+                        return float(sensor.Value)
+                    else:
+                        return 0.0

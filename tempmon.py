@@ -1,8 +1,7 @@
 import ctypes # for UAC checking
 from dearpygui.dearpygui import *
 from dearpygui.wrappers import *
-import ohm_helper
-from config_helper import *
+
 from elevate import elevate
 
 # ensure elevated status
