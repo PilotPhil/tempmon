@@ -1,35 +1,23 @@
 from dearpygui.dearpygui import *
+from dearpygui.wrappers import *
 from time import sleep, time
-import ohm
-from notify_run import Notify
-import config_helper
+import cubic.ohm as ohm
 
 # initialize OpenHardwareMonitor
 ohm = ohm.helper()
 
-# initialize Notify.run
-notif = Notify()
-
 class my_gui():
-    def __init__(self):
-        """Define the GUI layout and its data sources.
-        """
-        #some window formality
-        set_main_window_title("TempMon")
-        set_main_window_size(800, 400)
-
-        # define plot and table names, just for convenience.
-        myplot = "CPU and GPU Temperatures"
-        mytable = "Current Temps"
-
+    def set_vars(self, settings_dict):
+        """Define DearPyGui data sources"""
         # Define theme names, for later use.
-        themes = ["Dark", "Light", "Classic", "Dark 2", "Grey", "Dark Grey", "Cherry", "Purple", "Gold", "Red"]
+        self.themes = ["Dark", "Light", "Classic", "Dark 2", "Grey", "Dark Grey", "Cherry", "Purple", "Gold", "Red"]
+        self.log_levels = ["Trace", "Debug", "Info", "Warning", "Error", "Off"]
+        
+        # Set theme, based on settings passed via argument
+        set_theme(settings_dict["theme"])
 
-        # And set it.
-        set_theme("Gold")
-
+        # TODO: set imported settings from here. 
         # Make config_helper instance to read config.
-        configer = config_helper.config_reader()
 
         # define DPG data
         add_data("CPU Temp", [])
@@ -38,64 +26,17 @@ class my_gui():
         add_data("timeCounter", get_total_time())
         add_data("maxCPU", 0)
         add_data("maxGPU", 0)
-        add_data("threshold", configer.conread())
+        add_data("threshold", settings_dict["threshold"])
         add_data("is_warning_cleared", True)
 
-        # begin left panel
-        add_group("Left Panel", width=200)
-
-        # theme changer combo box and necessary callback
-        add_combo(" ##Themes", themes, default_value="Gold", callback="my_gui.applyTheme", parent="Left Panel", before="Table Window")
-
-        # add table to display current and max temp
-        # and confine to a child group to restrict height
-        add_child("Table Window", height=75, border=False)
-        add_table(mytable, ["","Intel", "NVIDIA"])
-        add_row(mytable, ["Current:", 0, 0])
-        add_row(mytable, ["Max:", 0, 0])
-        end_child()
-
-        # add a button to reset max temp records to 0
-        add_button("Reset Max", callback="reset_max")
-
-        # add a button to rest plot
-        add_button("Reset Plot", callback="my_gui.reset_plot")
-
-        # add a button to show logger
-        add_button("Show Logger", callback="my_gui.show_logger_callback")
-
-        # add checkbox to indicate if temp warning has cleared
-        add_checkbox("Warning Cleared?", data_source="is_warning_cleared", callback="my_gui.warning_manually_toggled")
-
-        # add logger level combo box
-        log_levels = ["Trace", "Debug", "Info", "Warning", "Error", "Off"]
-        add_radio_button("Log Level##logging", log_levels, callback="my_gui.set_logger_level", default_value=2)
-
-        # end left panel
-        end_group()
-
-
-        # add plot within a window
-        add_same_line()
-        add_group("Right Panel")
-        add_plot(myplot, "Time", "Temp")
-        end_group()
-
-        # set plot limits
-        set_plot_xlimits(myplot, 0, 100)
-        set_plot_ylimits(myplot, 0, 100)
-
-    @staticmethod
     def applyTheme(sender, data):
         theme = get_value(" ##Themes")
         set_theme(theme)
 
-    @staticmethod
     def set_logger_level(sender, data):
         level = get_value("Log Level##logging")
         set_log_level(level)
 
-    @staticmethod
     def reset_max(sender, data):
         """Reset max CPU and GPU temperature records and update table"""
         add_data("maxCPU", 0)
@@ -103,7 +44,6 @@ class my_gui():
         set_table_item(mytable, 1, 1, "0")
         set_table_item(mytable, 1, 2, "0")
 
-    @staticmethod
     def reset_plot(sender, data):
         """Clear plot and reset associated variables"""
         clear_plot(myplot)
@@ -111,12 +51,10 @@ class my_gui():
         add_data("GPU Temp", [])
         add_data("frameCount", 0)
 
-    @staticmethod
     def show_logger_callback(sender, data):
         show_logger()
         log("Logger opened")
 
-    @staticmethod
     def plot_callback(sender, data):
         """Update plot and table data every 1 second"""
         
@@ -143,43 +81,40 @@ class my_gui():
             if len(gpu_data) > 100: del gpu_data[0] # Keep list size under 50
 
             # update plot
-            clear_plot(myplot)
             add_line_series(myplot, "Intel", cpu_data, color=[0,0,255,255])
             add_line_series(myplot, "NVIDIA", gpu_data, color=[0,255,0,255])
 
             # update table with current temps
             set_table_item(mytable, 0, 1, str(int(current_cpu)))
             set_table_item(mytable, 0, 2, str(int(current_gpu)))
-                    
-        # update plot limits, based on lowest available frame_count in cpu_data.
-        # data is trimmed to 100 records, so keep the most recent 100 plot points in view.
-        set_plot_xlimits(myplot, cpu_data[0][0], cpu_data[0][0]+100)
 
-        # if current temp is higher than recorded maximum, 
-        # overwrite DPG register and update table.
-        if current_cpu > get_data("maxCPU"):
-            add_data("maxCPU", current_cpu)
-            set_table_item(mytable,1,1,(str(int(current_cpu))))
-        if current_gpu > get_data("maxGPU"):
-            add_data("maxGPU", current_gpu)
-            set_table_item(mytable,1,2,(str(int(current_gpu))))
-        
-        # check if temp is above threshold and send a notification if so
-        threshold = get_data("threshold")
-        temps = {'CPU' : current_cpu, 'GPU' : current_gpu}
-        self.thresh_check(threshold, temps)
+            # update plot limits, based on lowest available frame_count in cpu_data.
+            # data is trimmed to 100 records, so keep the most recent 100 plot points in view.
+            set_plot_xlimits(myplot, cpu_data[0][0], cpu_data[0][0]+100)
 
-        # update DPG register with all updated data
-        add_data("frameCount", frame_count)
-        add_data("CPU Temp", cpu_data) 
-        add_data("GPU Temp", gpu_data) 
-        add_data("timeCounter", get_total_time())   
+            # if current temp is higher than recorded maximum, 
+            # overwrite DPG register and update table.
+            if current_cpu > get_data("maxCPU"):
+                add_data("maxCPU", current_cpu)
+                set_table_item(mytable,1,1,(str(int(current_cpu))))
+            if current_gpu > get_data("maxGPU"):
+                add_data("maxGPU", current_gpu)
+                set_table_item(mytable,1,2,(str(int(current_gpu))))
+            
+            # check if temp is above threshold and send a notification if so
+            threshold = get_data("threshold")
+            temps = {'CPU' : current_cpu, 'GPU' : current_gpu}
+            thresh_check(threshold, temps)
 
-    @staticmethod
+            # update DPG register with all updated data
+            add_data("frameCount", frame_count)
+            add_data("CPU Temp", cpu_data) 
+            add_data("GPU Temp", gpu_data) 
+            add_data("timeCounter", get_total_time())
+
     def warning_manually_toggled(sender, data):
         log_info("Warning manually toggled.")
 
-    @staticmethod
     def thresh_check(threshold: float, temps: dict) -> None:
         """Check temperature against threshold. Send notification if out of range.
         
@@ -196,7 +131,7 @@ class my_gui():
                 
                 if warning_cleared:
                     notif_string = f"Temp Warning: {sensor} at {value}\u00B0C"
-                    notif.send(notif_string, " ")
+                    # notif.send(notif_string, " ")
                     log_warning(notif_string)
                     add_data("is_warning_cleared", False)
                     warning_cleared = True
@@ -208,6 +143,69 @@ class my_gui():
                     log_info("Warning cleared by system.")
                 add_data("is_warning_cleared", True)
                 warning_cleared = True
+    
+    def make_gui(self, settings_dict):
+        """Define the GUI layout and its data sources."""
+
+        #some window formality
+        set_main_window_title("TempMon")
+        set_main_window_size(800, 400)
+        set_item_height("logger##standard", 300)
+        set_window_pos("logger##standard", 250, 30)
+
+        # Set logger level to "Info"
+        set_log_level(2)
+
+        # define plot and table names, just for convenience.
+        myplot = "CPU and GPU Temperatures"
+        mytable = "Current Temps"
+
+        # Define theme names, for later use.
+        themes = ["Dark", "Light", "Classic", "Dark 2", "Grey", "Dark Grey", "Cherry", "Purple", "Gold", "Red"]
+        log_levels = ["Trace", "Debug", "Info", "Warning", "Error", "Off"]
+
+
+        with menu_bar("Menu Bar"):
+            
+            with menu("Theme"):
+                add_combo(" ##Themes", themes, default_value="Gold", callback="applyTheme") # theme selector
+
+            with menu("Actions"):
+                add_button("Reset Max", callback="reset_max") # resets max temp records to 0
+                add_button("Reset Plot", callback="reset_plot") # resets plot
+
+            with menu("Log Level"):
+                add_radio_button("Log Level##logging", log_levels, callback="set_logger_level", default_value=2) # logger level selector
+                add_button("Show Logger", callback="show_logger_callback") # shows logger
+
+
+
+        # begin left panel for table and buttons
+        with group("Left Panel", width=200):
+            with child("Table Window", height=75, border=False):
+                add_table(mytable, ["","Intel", "NVIDIA"])
+                add_row(mytable, ["Current:", 0, 0])
+                add_row(mytable, ["Max:", 0, 0])
+            
+            add_checkbox("Warning Cleared?", data_source="is_warning_cleared", callback="warning_manually_toggled")  # indicates if temperature warning has cleared
+
+        # add plot within a window
+        add_same_line()
+        add_group("Right Panel")
+        add_plot(myplot, "Time", "Temp")
+        end_group()
+
+        # to align plot
+        add_same_line()
+
+        # add plot
+        add_plot(myplot, "Time", "Temp")
+
+        # set plot limits
+        set_plot_xlimits(myplot, 0, 100)
+        set_plot_ylimits(myplot, 0, 100)
+
 
     def start_gui(self):
+        """Method to expose start_dearpygui()"""
         start_dearpygui()

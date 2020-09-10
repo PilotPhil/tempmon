@@ -1,21 +1,9 @@
-import sys
-import argparse
-import ctypes # for UAC checking
-import gui # private module for GUI control
-import tmsettings
+import regui # private module for GUI control
+import tmsettings # TempMon settings module
+from cubic.elevater import elevater # private UAC elevater
 
-# ensure elevated status
-if ctypes.windll.shell32.IsUserAnAdmin():
-    pass
-else:
-    elevate()
-    # make sure it was successful.
-    if ctypes.windll.shell32.IsUserAnAdmin():
-        print("Elevation successful.")
-    else:
-        print("Elevation failed.")
-        print("Exiting with sys code: 1")
-        sys.exit(1)
+# Elevate UAC
+elevater()
 
 # Reading my config here and passing values to my gui as a dictionary
 # ...but how do I pass it back to the settings writer?
@@ -24,5 +12,9 @@ settings = tmsettings.settings()
 
 # Initialize gui and make handler
 g = gui.my_gui()
+
+g.set_vars(settings)
+
+g.make_gui()
 
 g.start_gui()
