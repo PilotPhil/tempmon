@@ -14,7 +14,7 @@ class settings():
                     self.values[key] = value
                 else:
                     pass
-            print(self.values)
+            return self.values
 
     def export_config(self):
         with open(self.config_file, "w") as f:

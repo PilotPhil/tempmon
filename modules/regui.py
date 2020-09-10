@@ -7,7 +7,7 @@ import cubic.ohm as ohm
 ohm = ohm.helper()
 
 class my_gui():
-    def set_vars(self, settings_dict):
+    def set_vars(self, settings_dict: dict):
         """Define DearPyGui data sources"""
         # Define theme names, for later use.
         self.themes = ["Dark", "Light", "Classic", "Dark 2", "Grey", "Dark Grey", "Cherry", "Purple", "Gold", "Red"]
@@ -29,33 +29,33 @@ class my_gui():
         add_data("threshold", settings_dict["threshold"])
         add_data("is_warning_cleared", True)
 
-    def applyTheme(sender, data):
+    def applyTheme(self, sender, data):
         theme = get_value(" ##Themes")
         set_theme(theme)
 
-    def set_logger_level(sender, data):
+    def set_logger_level(self, sender, data):
         level = get_value("Log Level##logging")
         set_log_level(level)
 
-    def reset_max(sender, data):
+    def reset_max(self, sender, data):
         """Reset max CPU and GPU temperature records and update table"""
         add_data("maxCPU", 0)
         add_data("maxGPU", 0)
         set_table_item(mytable, 1, 1, "0")
         set_table_item(mytable, 1, 2, "0")
 
-    def reset_plot(sender, data):
+    def reset_plot(self, sender, data):
         """Clear plot and reset associated variables"""
         clear_plot(myplot)
         add_data("CPU Temp", [])
         add_data("GPU Temp", [])
         add_data("frameCount", 0)
 
-    def show_logger_callback(sender, data):
+    def show_logger_callback(self, sender, data):
         show_logger()
         log("Logger opened")
 
-    def plot_callback(sender, data):
+    def plot_callback(self, sender, data):
         """Update plot and table data every 1 second"""
         
         # get the last time the callback updated the data
@@ -112,10 +112,10 @@ class my_gui():
             add_data("GPU Temp", gpu_data) 
             add_data("timeCounter", get_total_time())
 
-    def warning_manually_toggled(sender, data):
+    def warning_manually_toggled(self, sender, data):
         log_info("Warning manually toggled.")
 
-    def thresh_check(threshold: float, temps: dict) -> None:
+    def thresh_check(self, threshold: float, temps: dict) -> None:
         """Check temperature against threshold. Send notification if out of range.
         
         Args:
@@ -144,7 +144,7 @@ class my_gui():
                 add_data("is_warning_cleared", True)
                 warning_cleared = True
     
-    def make_gui(self, settings_dict):
+    def make_gui(self):
         """Define the GUI layout and its data sources."""
 
         #some window formality
@@ -168,15 +168,15 @@ class my_gui():
         with menu_bar("Menu Bar"):
             
             with menu("Theme"):
-                add_combo(" ##Themes", themes, default_value="Gold", callback="applyTheme") # theme selector
+                add_combo(" ##Themes", themes, default_value="Gold", callback=self.applyTheme) # theme selector
 
             with menu("Actions"):
-                add_button("Reset Max", callback="reset_max") # resets max temp records to 0
-                add_button("Reset Plot", callback="reset_plot") # resets plot
+                add_button("Reset Max", callback=self.reset_max) # resets max temp records to 0
+                add_button("Reset Plot", callback=self.reset_plot) # resets plot
 
             with menu("Log Level"):
-                add_radio_button("Log Level##logging", log_levels, callback="set_logger_level", default_value=2) # logger level selector
-                add_button("Show Logger", callback="show_logger_callback") # shows logger
+                add_radio_button("Log Level##logging", log_levels, callback=self.set_logger_level, default_value=2) # logger level selector
+                add_button("Show Logger", callback=show_logger) # shows logger
 
 
 
@@ -187,13 +187,7 @@ class my_gui():
                 add_row(mytable, ["Current:", 0, 0])
                 add_row(mytable, ["Max:", 0, 0])
             
-            add_checkbox("Warning Cleared?", data_source="is_warning_cleared", callback="warning_manually_toggled")  # indicates if temperature warning has cleared
-
-        # add plot within a window
-        add_same_line()
-        add_group("Right Panel")
-        add_plot(myplot, "Time", "Temp")
-        end_group()
+            add_checkbox("Warning Cleared?", data_source="is_warning_cleared", callback=self.warning_manually_toggled) # indicates if temperature warning has cleared
 
         # to align plot
         add_same_line()
@@ -205,6 +199,7 @@ class my_gui():
         set_plot_xlimits(myplot, 0, 100)
         set_plot_ylimits(myplot, 0, 100)
 
+        set_render_callback(self.plot_callback)
 
     def start_gui(self):
         """Method to expose start_dearpygui()"""
