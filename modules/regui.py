@@ -1,7 +1,7 @@
 from dearpygui.dearpygui import *
 from dearpygui.wrappers import *
 from time import sleep, time
-import ohm
+import modules.ohm as ohm
 
 # initialize OpenHardwareMonitor
 ohm = ohm.helper()
@@ -29,7 +29,7 @@ class my_gui():
         add_data("threshold", settings_dict["threshold"])
         add_data("is_warning_cleared", True)
 
-    def applyTheme(self, sender, data):
+    def apply_theme(self, sender, data):
         theme = get_value(" ##Themes")
         set_theme(theme)
 
@@ -57,17 +57,18 @@ class my_gui():
 
     def plot_callback(self, sender, data):
         """Update plot and table data every 1 second"""
-        
+        print("enter plot_callback")
         # get the last time the callback updated the data
         lastTime = get_data("timeCounter")
-
+        print(f"{lastTime = }")
         # if it has been >= 1 second since last update, do another update.
         # otherwise, exit.
         if get_total_time() - lastTime >= 1:
+            print("Enter main logic loop")
             # get the number of frames that have been rendered and increment it
             frame_count = get_data("frameCount")
             frame_count+=1
-            
+            print(f"{frame_count = }")
             #grab current CPU and GPU temp
             current_cpu, current_gpu = ohm.get_cpu(), ohm.get_gpu()
 
@@ -111,6 +112,8 @@ class my_gui():
             add_data("CPU Temp", cpu_data) 
             add_data("GPU Temp", gpu_data) 
             add_data("timeCounter", get_total_time())
+        else:
+            print("Skipping main logic loop")
 
     def warning_manually_toggled(self, sender, data):
         log_info("Warning manually toggled.")
@@ -168,7 +171,7 @@ class my_gui():
         with menu_bar("Menu Bar"):
             
             with menu("Theme"):
-                add_combo(" ##Themes", themes, default_value="Gold", callback=self.applyTheme) # theme selector
+                add_combo(" ##Themes", themes, default_value="Gold", callback=self.apply_theme) # theme selector
 
             with menu("Actions"):
                 add_button("Reset Max", callback=self.reset_max) # resets max temp records to 0
