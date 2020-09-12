@@ -1,7 +1,7 @@
 from dearpygui.dearpygui import *
 from dearpygui.wrappers import *
 from time import sleep, time
-import cubic.ohm as ohm
+import ohm
 
 # initialize OpenHardwareMonitor
 ohm = ohm.helper()
