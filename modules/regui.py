@@ -103,8 +103,10 @@ class my_gui():
             set_table_item(mytable, 0, 1, str(int(current_cpu)))
             set_table_item(mytable, 0, 2, str(int(current_gpu)))
 
-            # update plot limits, based on lowest available frame_count in cpu_data.
-            # data is trimmed to 100 records, so keep the most recent 100 plot points in view.
+            # update plot limits, based on lowest
+            # available frame_count in cpu_data.
+            # data is trimmed to 100 records, so
+            # keep the most recent 100 plot points in view.
             set_plot_xlimits(myplot, cpu_data[0][0], cpu_data[0][0]+100)
 
             # if current temp is higher than recorded maximum,
@@ -141,14 +143,14 @@ class my_gui():
                 The value to be checked against.
                 If temp is higher, a notification will be sent.
             temps (dict):
-                requires a dictionary of format {sensor(str), temperature(float)}
+                takes a dictionary of format {sensor(str), temperature(float)}
         """
         print("Entering thresh_check")  # DEBUG
         warning_cleared = get_data("is_warning_cleared")
         for sensor, value in temps.items():
             if value > threshold:
-                # check if temperature has gone below threshold since last notification
-
+                # check if temp has gone below threshold
+                # since last notification
                 if warning_cleared:
                     notif_string = f"Temp Warning: {sensor} at {value}\u00B0C"
                     # notif.send(notif_string, " ")
@@ -166,8 +168,9 @@ class my_gui():
 
     def make_gui(self):
         """Define the GUI layout and its data sources."""
-        print("Entering make_gui") # DEBUG
-        #some window formality
+        print("Entering make_gui")  # DEBUG
+
+        # some window formality
         set_main_window_title("TempMon")
         set_main_window_size(800, 400)
         set_item_height("logger##standard", 300)
@@ -181,33 +184,42 @@ class my_gui():
         mytable = "Current Temps"
 
         # Define theme names, for later use.
-        themes = ["Dark", "Light", "Classic", "Dark 2", "Grey", "Dark Grey", "Cherry", "Purple", "Gold", "Red"]
+        themes = ["Dark", "Light", "Classic", "Dark 2", "Grey",
+                  "Dark Grey", "Cherry", "Purple", "Gold", "Red"]
         log_levels = ["Trace", "Debug", "Info", "Warning", "Error", "Off"]
-
 
         with menu_bar("Menu Bar"):
 
             with menu("Theme"):
-                add_combo(" ##Themes", themes, default_value="Gold", callback=self.apply_theme) # theme selector
+                add_combo(" ##Themes",
+                          themes,
+                          default_value="Gold",
+                          callback=self.apply_theme)  # theme selector
 
             with menu("Actions"):
-                add_button("Reset Max", callback=self.reset_max) # resets max temp records to 0
-                add_button("Reset Plot", callback=self.reset_plot) # resets plot
+                add_button("Reset Max", callback=self.reset_max)
+                add_button("Reset Plot", callback=self.reset_plot)
 
             with menu("Log Level"):
-                add_radio_button("Log Level##logging", log_levels, callback=self.set_logger_level, default_value=2) # logger level selector
-                add_button("Show Logger", callback=show_logger) # shows logger
+                # logger level selector
+                add_radio_button("Log Level##logging",
+                                 log_levels,
+                                 callback=self.set_logger_level,
+                                 default_value=2)
 
-
+                add_button("Show Logger", callback=show_logger)  # shows logger
 
         # begin left panel for table and buttons
         with group("Left Panel", width=200):
             with child("Table Window", height=75, border=False):
-                add_table(mytable, ["","Intel", "NVIDIA"])
+                add_table(mytable, ["", "Intel", "NVIDIA"])
                 add_row(mytable, ["Current:", 0, 0])
                 add_row(mytable, ["Max:", 0, 0])
-            
-            add_checkbox("Warning Cleared?", data_source="is_warning_cleared", callback=self.warning_manually_toggled) # indicates if temperature warning has cleared
+
+            # indicates if temperature warning has cleared
+            add_checkbox("Warning Cleared?",
+                         data_source="is_warning_cleared",
+                         callback=self.warning_manually_toggled)
 
         # to align plot
         add_same_line()
@@ -223,5 +235,5 @@ class my_gui():
 
     def start_gui(self):
         """Method to expose start_dearpygui()"""
-        print("Entering start_gui") # DEBUG
+        print("Entering start_gui")  # DEBUG
         start_dearpygui()
