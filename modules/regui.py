@@ -11,13 +11,14 @@ class my_gui():
         """Define DearPyGui data sources"""
         # Define theme names, for later use.
         print("Entering set_vars")  # DEBUG
-        self.themes = ["Dark", "Light", "Classic", "Dark 2", "Grey", "Dark Grey", "Cherry", "Purple", "Gold", "Red"]
+        self.themes = ["Dark", "Light", "Classic", "Dark 2", "Grey",
+                       "Dark Grey", "Cherry", "Purple", "Gold", "Red"]
         self.log_levels = ["Trace", "Debug", "Info", "Warning", "Error", "Off"]
-        
+
         # Set theme, based on settings passed via argument
         set_theme(settings_dict["theme"])
 
-        # TODO: set imported settings from here. 
+        # TODO: set imported settings from here.
         # Make config_helper instance to read config.
 
         # define DPG data
@@ -62,33 +63,41 @@ class my_gui():
 
     def plot_callback(self, sender, data):
         """Update plot and table data every 1 second"""
-        print("Entering plot_callback") # DEBUG
+        print("Entering plot_callback")  # DEBUG
         # get the last time the callback updated the data
         lastTime = get_data("timeCounter")
         print(f"{lastTime = }")
         # if it has been >= 1 second since last update, do another update.
         # otherwise, exit.
         if get_total_time() - lastTime >= 1:
-            print("Enter main logic loop")
+            print("Enter main logic loop")  # DEBUG
             # get the number of frames that have been rendered and increment it
             frame_count = get_data("frameCount")
-            frame_count+=1
+            frame_count += 1
             print(f"{frame_count = }")
-            #grab current CPU and GPU temp
+            # grab current CPU and GPU temp
             current_cpu, current_gpu = ohm.get_cpu(), ohm.get_gpu()
 
-            cpu_data = get_data("CPU Temp") # Pull DearPyGui register data into local list variable
-            cpu_data.append([frame_count, current_cpu]) # Adds current temp to list, paired with frame count
-            
-            gpu_data = get_data("GPU Temp") # Pull DearPyGui register data into local list variable
-            gpu_data.append([frame_count, current_gpu]) # Adds current temp to list, paired with frame count
+            # Pull DearPyGui register data into local list variable
+            cpu_data = get_data("CPU Temp")
 
-            if len(cpu_data) > 100: del cpu_data[0] # Keep list size under 50
-            if len(gpu_data) > 100: del gpu_data[0] # Keep list size under 50
+            # Adds current temp to list, paired with frame count
+            cpu_data.append([frame_count, current_cpu])
+
+            # Pull DearPyGui register data into local list variable
+            gpu_data = get_data("GPU Temp")
+
+            # Adds current temp to list, paired with frame count
+            gpu_data.append([frame_count, current_gpu])
+
+            if len(cpu_data) > 100:
+                del cpu_data[0]  # Keep list size under 50
+            if len(gpu_data) > 100:
+                del gpu_data[0]  # Keep list size under 50
 
             # update plot
-            add_line_series(myplot, "Intel", cpu_data, color=[0,0,255,255])
-            add_line_series(myplot, "NVIDIA", gpu_data, color=[0,255,0,255])
+            add_line_series(myplot, "Intel", cpu_data, color=[0, 0, 255, 255])
+            add_line_series(myplot, "NVIDIA", gpu_data, color=[0, 255, 0, 255])
 
             # update table with current temps
             set_table_item(mytable, 0, 1, str(int(current_cpu)))
@@ -98,47 +107,48 @@ class my_gui():
             # data is trimmed to 100 records, so keep the most recent 100 plot points in view.
             set_plot_xlimits(myplot, cpu_data[0][0], cpu_data[0][0]+100)
 
-            # if current temp is higher than recorded maximum, 
+            # if current temp is higher than recorded maximum,
             # overwrite DPG register and update table.
             if current_cpu > get_data("maxCPU"):
                 set_value("maxCPU", current_cpu)
-                set_table_item(mytable,1,1,(str(int(current_cpu))))
+                set_table_item(mytable, 1, 1, (str(int(current_cpu))))
             if current_gpu > get_data("maxGPU"):
                 set_value("maxGPU", current_gpu)
-                set_table_item(mytable,1,2,(str(int(current_gpu))))
-            
+                set_table_item(mytable, 1, 2, (str(int(current_gpu))))
+
             # check if temp is above threshold and send a notification if so
             threshold = get_data("threshold")
-            temps = {'CPU' : current_cpu, 'GPU' : current_gpu}
+            temps = {'CPU': current_cpu, 'GPU': current_gpu}
             thresh_check(threshold, temps)
 
             # update DPG register with all updated data
             set_value("frameCount", frame_count)
-            set_value("CPU Temp", cpu_data) 
-            set_value("GPU Temp", gpu_data) 
+            set_value("CPU Temp", cpu_data)
+            set_value("GPU Temp", gpu_data)
             set_value("timeCounter", get_total_time())
         else:
-            print("Skipping main logic loop")
+            print("Skipping main logic loop")  # DEBUG
 
     def warning_manually_toggled(self, sender, data):
-        print("Entering warning_manually_toggled") # DEBUG
+        print("Entering warning_manually_toggled")  # DEBUG
         log_info("Warning manually toggled.")
 
     def thresh_check(self, threshold: float, temps: dict) -> None:
         """Check temperature against threshold. Send notification if out of range.
-        
+
         Args:
             threshold (float):
-                The value to be checked against. If temp is higher, a notification will be sent.
-            temps (dict): 
+                The value to be checked against.
+                If temp is higher, a notification will be sent.
+            temps (dict):
                 requires a dictionary of format {sensor(str), temperature(float)}
         """
-        print("Entering thresh_check") # DEBUG
+        print("Entering thresh_check")  # DEBUG
         warning_cleared = get_data("is_warning_cleared")
         for sensor, value in temps.items():
             if value > threshold:
                 # check if temperature has gone below threshold since last notification
-                
+
                 if warning_cleared:
                     notif_string = f"Temp Warning: {sensor} at {value}\u00B0C"
                     # notif.send(notif_string, " ")
@@ -153,7 +163,7 @@ class my_gui():
                     log_info("Warning cleared by system.")
                 set_value("is_warning_cleared", True)
                 warning_cleared = True
-    
+
     def make_gui(self):
         """Define the GUI layout and its data sources."""
         print("Entering make_gui") # DEBUG
@@ -176,7 +186,7 @@ class my_gui():
 
 
         with menu_bar("Menu Bar"):
-            
+
             with menu("Theme"):
                 add_combo(" ##Themes", themes, default_value="Gold", callback=self.apply_theme) # theme selector
 
