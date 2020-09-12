@@ -1,15 +1,16 @@
 from dearpygui.dearpygui import *
 from dearpygui.wrappers import *
-from time import sleep, time
 import modules.ohm as ohm
 
 # initialize OpenHardwareMonitor
 ohm = ohm.helper()
 
+
 class my_gui():
     def set_vars(self, settings_dict: dict):
         """Define DearPyGui data sources"""
         # Define theme names, for later use.
+        print("Entering set_vars")  # DEBUG
         self.themes = ["Dark", "Light", "Classic", "Dark 2", "Grey", "Dark Grey", "Cherry", "Purple", "Gold", "Red"]
         self.log_levels = ["Trace", "Debug", "Info", "Warning", "Error", "Off"]
         
@@ -30,15 +31,18 @@ class my_gui():
         add_data("is_warning_cleared", True)
 
     def apply_theme(self, sender, data):
+        print("Entering apply_theme")  # DEBUG
         theme = get_value(" ##Themes")
         set_theme(theme)
 
     def set_logger_level(self, sender, data):
+        print("Entering set_logger_level")  # DEBUG
         level = get_value("Log Level##logging")
         set_log_level(level)
 
     def reset_max(self, sender, data):
         """Reset max CPU and GPU temperature records and update table"""
+        print("Entering reset_max")  # DEBUG
         set_value("maxCPU", 0)
         set_value("maxGPU", 0)
         set_table_item(mytable, 1, 1, "0")
@@ -46,6 +50,7 @@ class my_gui():
 
     def reset_plot(self, sender, data):
         """Clear plot and reset associated variables"""
+        print("Entering reset_plot")  # DEBUG
         clear_plot(myplot)
         set_value("CPU Temp", [])
         set_value("GPU Temp", [])
@@ -57,7 +62,7 @@ class my_gui():
 
     def plot_callback(self, sender, data):
         """Update plot and table data every 1 second"""
-        print("enter plot_callback")
+        print("Entering plot_callback") # DEBUG
         # get the last time the callback updated the data
         lastTime = get_data("timeCounter")
         print(f"{lastTime = }")
@@ -116,6 +121,7 @@ class my_gui():
             print("Skipping main logic loop")
 
     def warning_manually_toggled(self, sender, data):
+        print("Entering warning_manually_toggled") # DEBUG
         log_info("Warning manually toggled.")
 
     def thresh_check(self, threshold: float, temps: dict) -> None:
@@ -127,6 +133,7 @@ class my_gui():
             temps (dict): 
                 requires a dictionary of format {sensor(str), temperature(float)}
         """
+        print("Entering thresh_check") # DEBUG
         warning_cleared = get_data("is_warning_cleared")
         for sensor, value in temps.items():
             if value > threshold:
@@ -149,7 +156,7 @@ class my_gui():
     
     def make_gui(self):
         """Define the GUI layout and its data sources."""
-
+        print("Entering make_gui") # DEBUG
         #some window formality
         set_main_window_title("TempMon")
         set_main_window_size(800, 400)
@@ -206,4 +213,5 @@ class my_gui():
 
     def start_gui(self):
         """Method to expose start_dearpygui()"""
+        print("Entering start_gui") # DEBUG
         start_dearpygui()
