@@ -39,17 +39,17 @@ class my_gui():
 
     def reset_max(self, sender, data):
         """Reset max CPU and GPU temperature records and update table"""
-        add_data("maxCPU", 0)
-        add_data("maxGPU", 0)
+        set_value("maxCPU", 0)
+        set_value("maxGPU", 0)
         set_table_item(mytable, 1, 1, "0")
         set_table_item(mytable, 1, 2, "0")
 
     def reset_plot(self, sender, data):
         """Clear plot and reset associated variables"""
         clear_plot(myplot)
-        add_data("CPU Temp", [])
-        add_data("GPU Temp", [])
-        add_data("frameCount", 0)
+        set_value("CPU Temp", [])
+        set_value("GPU Temp", [])
+        set_value("frameCount", 0)
 
     def show_logger_callback(self, sender, data):
         show_logger()
@@ -96,10 +96,10 @@ class my_gui():
             # if current temp is higher than recorded maximum, 
             # overwrite DPG register and update table.
             if current_cpu > get_data("maxCPU"):
-                add_data("maxCPU", current_cpu)
+                set_value("maxCPU", current_cpu)
                 set_table_item(mytable,1,1,(str(int(current_cpu))))
             if current_gpu > get_data("maxGPU"):
-                add_data("maxGPU", current_gpu)
+                set_value("maxGPU", current_gpu)
                 set_table_item(mytable,1,2,(str(int(current_gpu))))
             
             # check if temp is above threshold and send a notification if so
@@ -108,10 +108,10 @@ class my_gui():
             thresh_check(threshold, temps)
 
             # update DPG register with all updated data
-            add_data("frameCount", frame_count)
-            add_data("CPU Temp", cpu_data) 
-            add_data("GPU Temp", gpu_data) 
-            add_data("timeCounter", get_total_time())
+            set_value("frameCount", frame_count)
+            set_value("CPU Temp", cpu_data) 
+            set_value("GPU Temp", gpu_data) 
+            set_value("timeCounter", get_total_time())
         else:
             print("Skipping main logic loop")
 
@@ -136,7 +136,7 @@ class my_gui():
                     notif_string = f"Temp Warning: {sensor} at {value}\u00B0C"
                     # notif.send(notif_string, " ")
                     log_warning(notif_string)
-                    add_data("is_warning_cleared", False)
+                    set_value("is_warning_cleared", False)
                     warning_cleared = True
                 elif not warning_cleared:
                     log_info("Temp still above threshold. Warning not cleared. Notification cancelled.")
@@ -144,7 +144,7 @@ class my_gui():
                 log("Threshold check cleared.")
                 if not warning_cleared:
                     log_info("Warning cleared by system.")
-                add_data("is_warning_cleared", True)
+                set_value("is_warning_cleared", True)
                 warning_cleared = True
     
     def make_gui(self):
