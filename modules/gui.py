@@ -76,14 +76,19 @@ class my_gui():
         # get the last time the callback updated the data
         lastTime = get_data("timeCounter")
         print(f"{lastTime = }")
+
+        totalTime = get_total_time()
+        print(f"{totalTime = }")
+        
         # if it has been >= 1 second since last update, do another update.
         # otherwise, exit.
         if get_total_time() - lastTime >= 1:
             print("Enter main logic loop")  # DEBUG
             # get the number of frames that have been rendered and increment it
             frame_count = get_data("frameCount")
+            print(f"{frame_count = }")
             frame_count += 1
-            print(f"{frame_count}")
+            print(f"{frame_count = }")
             # grab current CPU and GPU temp
             current_cpu, current_gpu = ohm.get_cpu(), ohm.get_gpu()
 
