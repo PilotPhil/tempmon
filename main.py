@@ -1,6 +1,6 @@
-import modules.regui as regui # private module for GUI control
-import modules.tmsettings as tmsettings # TempMon settings module
-from cubic.elevater import elevater # private UAC elevation control
+import modules.gui as gui  # private module for GUI control
+import modules.tmsettings as tmsettings  # TempMon settings module
+from modules.elevater import elevater  # private UAC elevation control
 
 # Elevate UAC
 elevater()
