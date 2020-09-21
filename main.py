@@ -12,7 +12,7 @@ set_handler = tmsettings.settings()
 settings = set_handler.import_config()
 
 # Initialize gui and make handler
-g = regui.my_gui()
+g = gui.my_gui()
 
 # Send settings to GUI
 g.set_vars(settings)

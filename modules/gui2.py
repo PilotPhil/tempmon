@@ -5,9 +5,6 @@ import modules.ohm as ohm
 # initialize OpenHardwareMonitor
 ohm = ohm.helper()
 
-# define plot and table names, just for convenience.
-myplot = "CPU and GPU Temperatures"
-mytable = "Current Temps"
 
 class my_gui():
     def set_vars(self, settings_dict: dict):
@@ -34,20 +31,17 @@ class my_gui():
         add_data("threshold", settings_dict["threshold"])
         add_data("is_warning_cleared", True)
 
-    @staticmethod
-    def apply_theme(sender, data):
+    def apply_theme(self, sender, data):
         print("Entering apply_theme")  # DEBUG
         theme = get_value(" ##Themes")
         set_theme(theme)
 
-    @staticmethod
-    def set_logger_level(sender, data):
+    def set_logger_level(self, sender, data):
         print("Entering set_logger_level")  # DEBUG
         level = get_value("Log Level##logging")
         set_log_level(level)
 
-    @staticmethod
-    def reset_max(sender, data):
+    def reset_max(self, sender, data):
         """Reset max CPU and GPU temperature records and update table"""
         print("Entering reset_max")  # DEBUG
         set_value("maxCPU", 0)
@@ -55,8 +49,7 @@ class my_gui():
         set_table_item(mytable, 1, 1, "0")
         set_table_item(mytable, 1, 2, "0")
 
-    @staticmethod
-    def reset_plot(sender, data):
+    def reset_plot(self, sender, data):
         """Clear plot and reset associated variables"""
         print("Entering reset_plot")  # DEBUG
         clear_plot(myplot)
@@ -64,13 +57,11 @@ class my_gui():
         set_value("GPU Temp", [])
         set_value("frameCount", 0)
 
-    @staticmethod
-    def show_logger_callback(sender, data):
+    def show_logger_callback(self, sender, data):
         show_logger()
         log("Logger opened")
 
-    @staticmethod
-    def plot_callback(sender, data):
+    def plot_callback(self, sender, data):
         """Update plot and table data every 1 second"""
         print("Entering plot_callback")  # DEBUG
         # get the last time the callback updated the data
@@ -83,7 +74,7 @@ class my_gui():
             # get the number of frames that have been rendered and increment it
             frame_count = get_data("frameCount")
             frame_count += 1
-            print(f"{frame_count}")
+            print(f"{frame_count = }")
             # grab current CPU and GPU temp
             current_cpu, current_gpu = ohm.get_cpu(), ohm.get_gpu()
 
@@ -130,7 +121,7 @@ class my_gui():
             # check if temp is above threshold and send a notification if so
             threshold = get_data("threshold")
             temps = {'CPU': current_cpu, 'GPU': current_gpu}
-            my_gui.thresh_check(threshold, temps)
+            thresh_check(threshold, temps)
 
             # update DPG register with all updated data
             set_value("frameCount", frame_count)
@@ -140,13 +131,11 @@ class my_gui():
         else:
             print("Skipping main logic loop")  # DEBUG
 
-    @staticmethod
-    def warning_manually_toggled(sender, data):
+    def warning_manually_toggled(self, sender, data):
         print("Entering warning_manually_toggled")  # DEBUG
         log_info("Warning manually toggled.")
 
-    @staticmethod
-    def thresh_check(threshold: float, temps: dict) -> None:
+    def thresh_check(self, threshold: float, temps: dict) -> None:
         """Check temperature against threshold. Send notification if out of range.
 
         Args:
