@@ -19,3 +19,9 @@ If run as a regular user, the system will prompt for UAC permissions, and spawn 
 To run tempmon in the background, run:
 
 ```> pythonw.exe tempmon.py```
+
+---
+
+## TODO
+
+- Add ability to save custom threshold.
