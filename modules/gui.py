@@ -31,8 +31,10 @@ class my_gui():
         add_data("timeCounter", get_total_time())
         add_data("maxCPU", 0)
         add_data("maxGPU", 0)
-        add_data("threshold", settings_dict["threshold"])
-        add_data("is_warning_cleared", True)
+        add_data("cpu_threshold", settings_dict["cpu_threshold"])
+        add_data("gpu_threshold", settings_dict["gpu_threshold"])
+        add_data("is_cpu_warning_cleared", True)
+        add_data("is_gpu_warning_cleared", True)
 
     @staticmethod
     def apply_theme(sender, data):
@@ -94,6 +96,10 @@ class my_gui():
             # Adds current temp to list, paired with frame count
             gpu_data.append([frame_count, current_gpu])
 
+            # Get current threshold values
+            curr_cpu_thresh = get_data("cpu_threshold")
+            curr_gpu_thresh = get_data("gpu_threshold")
+
             if len(cpu_data) > 100:
                 del cpu_data[0]  # Keep list size under 50
             if len(gpu_data) > 100:
@@ -103,9 +109,11 @@ class my_gui():
             add_line_series(myplot, "Intel", cpu_data, color=[0, 0, 255, 255])
             add_line_series(myplot, "NVIDIA", gpu_data, color=[0, 255, 0, 255])
 
-            # update table with current temps
+            # update table with current temps and thresholds
             set_table_item(mytable, 0, 1, str(int(current_cpu)))
             set_table_item(mytable, 0, 2, str(int(current_gpu)))
+            set_table_item(mytable, 2, 1, str(int(curr_cpu_thresh)))
+            set_table_item(mytable, 2, 2, str(int(curr_gpu_thresh)))
 
             # update plot limits, based on lowest
             # available frame_count in cpu_data.
@@ -122,10 +130,15 @@ class my_gui():
                 add_data("maxGPU", current_gpu)
                 set_table_item(mytable, 1, 2, (str(int(current_gpu))))
 
-            # check if temp is above threshold and send a notification if so
-            threshold = get_data("threshold")
+            # check if temp is above threshold.
+            # Get thresholds for each sensor, pack them into a dictionary
+            # Pack current temps into a dictionary.
+            # Send both to my_gui.thresh_check()
+            cpu_threshold = get_data("cpu_threshold")
+            gpu_threshold = get_data("gpu_threshold")
             temps = {'CPU': current_cpu, 'GPU': current_gpu}
-            my_gui.thresh_check(threshold, temps)
+            thresholds = {'CPU': cpu_threshold, 'GPU': gpu_threshold}
+            my_gui.thresh_check(thresholds, temps)
 
             # update DPG register with all updated data
             add_data("frameCount", frame_count)
@@ -140,36 +153,52 @@ class my_gui():
         log_info("Warning manually toggled.")
 
     @staticmethod
-    def thresh_check(threshold: float, temps: dict) -> None:
-        """Check temperature against threshold. Send notification if out of range.
+    def thresh_check(thresholds: dict, temps: dict) -> None:
+        """Check temperatures against thresholds. Send notification if out of range.
 
         Args:
-            threshold (float):
-                The value to be checked against.
-                If temp is higher, a notification will be sent.
+            thresholds (dict):
+                dictionary with thresholds for CPU and GPU in float format.
             temps (dict):
                 takes a dictionary of format {sensor(str), temperature(float)}
         """
+
         log("Beginning thresh_check")
-        warning_cleared = get_data("is_warning_cleared")
+
+        cpu_warning_cleared = get_data("is_cpu_warning_cleared")
+        gpu_warning_cleared = get_data("is_gpu_warning_cleared")
+
+        warnings_cleared = {'CPU': cpu_warning_cleared, 'GPU': gpu_warning_cleared}
+        cpu_clear_thresh = thresholds['CPU'] - 5
+        gpu_clear_thresh = thresholds['GPU'] - 5
+
         for sensor, value in temps.items():
-            if value > threshold:
+            log(f"{sensor} at {value}, {warnings_cleared[sensor] = }")
+            if value >= thresholds[sensor]:
                 # check if temp has gone below threshold
                 # since last notification
-                if warning_cleared:
+                if warnings_cleared[sensor]:
                     notif_string = f"Temp Warning: {sensor} at {value}\u00B0C"
                     # notif.send(notif_string, " ")
                     log_warning(notif_string)
-                    add_data("is_warning_cleared", False)
-                    warning_cleared = True
-                elif not warning_cleared:
-                    log_info("Temp still above threshold. Warning not cleared. Notification cancelled.")
+                    if sensor == 'CPU':
+                        add_data("is_cpu_warning_cleared", False)
+                    elif sensor == 'GPU':
+                        add_data("is_gpu_warning_cleared", False)
+                elif not warnings_cleared[sensor]:
+                    log_info(f"{sensor} temp still above threshold. Warning not cleared.")
+            elif value > (thresholds[sensor] - 5.0) and not warnings_cleared[sensor]:
+                log_debug(f"{sensor} has not dropped 5\u00B0C below threshold. Warning not cleared.")
             else:
-                log_info(f"Threshold check cleared. {sensor} is at {value}")
-                if not warning_cleared:
-                    log_info("Warning cleared by system.")
-                add_data("is_warning_cleared", True)
-                warning_cleared = True
+                log_info(f"{sensor} threshold check cleared. {sensor} is at {value}\u00B0C")
+                if not warnings_cleared[sensor]:
+                    # log_info("Warning cleared by system.")
+                    if sensor == 'CPU':
+                        log_info("CPU warning cleared by system.")
+                        add_data("is_cpu_warning_cleared", True)
+                    elif sensor == 'GPU':
+                        log_info("GPU warning cleared by system")
+                        add_data("is_gpu_warning_cleared", True)
 
     def make_gui(self):
         """Define the GUI layout and its data sources."""
@@ -219,10 +248,15 @@ class my_gui():
                 add_table(mytable, ["", "Intel", "NVIDIA"])
                 add_row(mytable, ["Current:", 0, 0])
                 add_row(mytable, ["Max:", 0, 0])
+                add_row(mytable, ["Thresh:", 0, 0])
 
             # indicates if temperature warning has cleared
-            add_checkbox("Warning Cleared?",
-                         data_source="is_warning_cleared",
+            add_checkbox("CPU Warning Cleared?",
+                         data_source="is_cpu_warning_cleared",
+                         callback=self.warning_manually_toggled)
+
+            add_checkbox("GPU Warning Cleared?",
+                         data_source="is_gpu_warning_cleared",
                          callback=self.warning_manually_toggled)
 
         # to align plot

@@ -8,8 +8,8 @@ elevater()
 # Reading my config here and passing values to my gui as a dictionary
 # ...but how do I pass it back to the settings writer?
 # hm...
-set_handler = tmsettings.settings()
-settings = set_handler.import_config()
+settings_handler = tmsettings.settings()
+settings = settings_handler.import_config()
 
 # Initialize gui and make handler
 g = gui.my_gui()
