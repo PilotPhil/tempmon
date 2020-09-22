@@ -9,20 +9,34 @@ ohm = ohm.helper()
 myplot = "CPU and GPU Temperatures"
 mytable = "Current Temps"
 
-class my_gui():
-    def set_vars(self, settings_dict: dict):
+class gui():
+    class settings():
+        
+        _observers = []
+        
+        def attach(self, observer):
+            self._observers.append(observer)
+            print(f"Attached observer.")
+        
+        def detach(self, observer):
+            self._observers.remove(observer)
+            print(f"Detached observer.")
+        
+        def write_settings(self, settings):
+            for observer in self._observers:
+                observer.update(settings)
+
+    def __init__(self, settings_dict, settings_observer):
         """Define DearPyGui data sources"""
-        # Define theme names, for later use.
-        log("Entering my_gui.set_vars")
+
+        # Define theme names and log levels, for later use.
+        log("Initializing gui.gui class.")
         self.themes = ["Dark", "Light", "Classic", "Dark 2", "Grey",
                        "Dark Grey", "Cherry", "Purple", "Gold", "Red"]
         self.log_levels = ["Trace", "Debug", "Info", "Warning", "Error", "Off"]
 
         # Set theme, based on settings passed via argument
         set_theme(settings_dict["theme"])
-
-        # TODO: set imported settings from here.
-        # Make config_helper instance to read config.
 
         # define DPG data
         add_data("CPU Temp", [])
@@ -35,6 +49,35 @@ class my_gui():
         add_data("gpu_threshold", settings_dict["gpu_threshold"])
         add_data("is_cpu_warning_cleared", True)
         add_data("is_gpu_warning_cleared", True)
+
+        # And attach the passed observer to settings subject
+        # Gonna make a new settings instance, and then pass to it.
+        # Pretty sure this is unnecessary, so I may refactor it later.
+        self.settings().attach(settings_observer)
+
+
+    # def set_vars(self, settings_dict: dict):
+    #     """Define DearPyGui data sources"""
+    #     # Define theme names, for later use.
+    #     log("Entering my_gui.set_vars")
+    #     self.themes = ["Dark", "Light", "Classic", "Dark 2", "Grey",
+    #                    "Dark Grey", "Cherry", "Purple", "Gold", "Red"]
+    #     self.log_levels = ["Trace", "Debug", "Info", "Warning", "Error", "Off"]
+
+    #     # Set theme, based on settings passed via argument
+    #     set_theme(settings_dict["theme"])
+
+    #     # define DPG data
+    #     add_data("CPU Temp", [])
+    #     add_data("GPU Temp", [])
+    #     add_data("frameCount", 0)
+    #     add_data("timeCounter", get_total_time())
+    #     add_data("maxCPU", 0)
+    #     add_data("maxGPU", 0)
+    #     add_data("cpu_threshold", settings_dict["cpu_threshold"])
+    #     add_data("gpu_threshold", settings_dict["gpu_threshold"])
+    #     add_data("is_cpu_warning_cleared", True)
+    #     add_data("is_gpu_warning_cleared", True)
 
     @staticmethod
     def apply_theme(sender, data):
@@ -138,7 +181,7 @@ class my_gui():
             gpu_threshold = get_data("gpu_threshold")
             temps = {'CPU': current_cpu, 'GPU': current_gpu}
             thresholds = {'CPU': cpu_threshold, 'GPU': gpu_threshold}
-            my_gui.thresh_check(thresholds, temps)
+            gui.thresh_check(thresholds, temps)
 
             # update DPG register with all updated data
             add_data("frameCount", frame_count)
@@ -200,6 +243,13 @@ class my_gui():
                         log_info("GPU warning cleared by system")
                         add_data("is_gpu_warning_cleared", True)
 
+    def update_threshold(self, sender, data):
+        settings_dict = {"cpu_threshold": 70, "gpu_threshold": 70, "theme": "Gold"}
+        self.settings().write_settings(settings_dict)
+
+    def save_threshold(self, sender, data)
+        pass
+
     def make_gui(self):
         """Define the GUI layout and its data sources."""
 
@@ -217,15 +267,15 @@ class my_gui():
         mytable = "Current Temps"
 
         # Define theme names, for later use.
-        themes = ["Dark", "Light", "Classic", "Dark 2", "Grey",
-                  "Dark Grey", "Cherry", "Purple", "Gold", "Red"]
-        log_levels = ["Trace", "Debug", "Info", "Warning", "Error", "Off"]
+        # themes = ["Dark", "Light", "Classic", "Dark 2", "Grey",
+        #           "Dark Grey", "Cherry", "Purple", "Gold", "Red"]
+        # log_levels = ["Trace", "Debug", "Info", "Warning", "Error", "Off"]
 
         with menu_bar("Menu Bar"):
 
             with menu("Theme"):
                 add_combo(" ##Themes",
-                          themes,
+                          self.themes,
                           default_value="Gold",
                           callback=self.apply_theme)  # theme selector
 
@@ -236,7 +286,7 @@ class my_gui():
             with menu("Log Level"):
                 # logger level selector
                 add_radio_button("Log Level##logging",
-                                 log_levels,
+                                 self.log_levels,
                                  callback=self.set_logger_level,
                                  default_value=2)
 
@@ -258,6 +308,10 @@ class my_gui():
             add_checkbox("GPU Warning Cleared?",
                          data_source="is_gpu_warning_cleared",
                          callback=self.warning_manually_toggled)
+
+        # Add simple button to change threshold to 70
+        # To be replaced with full settings functionality in the future
+        add_button("Threshold to 70", callback=self.update_threshold)
 
         # to align plot
         add_same_line()

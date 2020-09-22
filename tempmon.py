@@ -8,14 +8,18 @@ elevater()
 # Reading my config here and passing values to my gui as a dictionary
 # ...but how do I pass it back to the settings writer?
 # hm...
-settings_handler = tmsettings.settings()
-settings = settings_handler.import_config()
+# loaded_settings = tmsettings.settings().import_config()
+tm_sett_handle = tmsettings.settings()
 
-# Initialize gui and make handler
-g = gui.my_gui()
+# Instatiate a settings observer and attach it to GUI subject
+# sett_observer = tmsettings.Observer()
+# g.settings().attach(sett_observer)
 
-# Send settings to GUI
-g.set_vars(settings)
+# # Send settings to GUI
+# g.settings().set_vars(loaded_settings)
+
+# Initialize gui, make handle, pass settings for init
+g = gui.gui(tm_sett_handle.import_config(), tm_sett_handle)
 
 # Define layout
 g.make_gui()
