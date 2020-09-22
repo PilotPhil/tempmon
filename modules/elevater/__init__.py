@@ -10,7 +10,6 @@ def elevater():
         print("Not elevated. Attempting UAC elevation.")
         try:
             elevate()
-            print("Elevation successful.")
         except OSError:
             print("Elevation failed.")
             print("Exiting with sys code: 1")
