@@ -247,8 +247,15 @@ class gui():
         settings_dict = {"cpu_threshold": 70, "gpu_threshold": 70, "theme": "Gold"}
         self.settings().write_settings(settings_dict)
 
-    def save_threshold(self, sender, data)
-        pass
+    def save_threshold(self, sender, data):
+        # cpu_threshold = get_data("cpu_threshold")
+
+        settings_dict = {"cpu_threshold": get_data("cpu_threshold"), "gpu_threshold": get_data("gpu_threshold")}
+        self.settings().write_settings(settings_dict)
+    
+    def save_theme(self, sender, data):
+        settings_dict = {"theme": get_theme()}
+        self.settings().write_settings(settings_dict)
 
     def make_gui(self):
         """Define the GUI layout and its data sources."""
@@ -278,6 +285,7 @@ class gui():
                           self.themes,
                           default_value="Gold",
                           callback=self.apply_theme)  # theme selector
+                add_button("Save Theme", callback=self.save_theme)
 
             with menu("Actions"):
                 add_button("Reset Max", callback=self.reset_max)
@@ -291,6 +299,12 @@ class gui():
                                  default_value=2)
 
                 add_button("Show Logger", callback=show_logger)  # shows logger
+            
+            with menu("Threshold"):
+                # Sliders to change threshold values. Updates DPG register automatically.
+                add_slider_float("CPU Threshold", data_source="cpu_threshold")
+                add_slider_float("GPU Threshold", data_source="gpu_threshold")
+                add_button("Save", callback=self.save_threshold)
 
         # begin left panel for table and buttons
         with group("Left Panel", width=200):
@@ -308,10 +322,6 @@ class gui():
             add_checkbox("GPU Warning Cleared?",
                          data_source="is_gpu_warning_cleared",
                          callback=self.warning_manually_toggled)
-
-        # Add simple button to change threshold to 70
-        # To be replaced with full settings functionality in the future
-        add_button("Threshold to 70", callback=self.update_threshold)
 
         # to align plot
         add_same_line()
