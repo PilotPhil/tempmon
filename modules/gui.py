@@ -13,7 +13,7 @@ class my_gui():
     def set_vars(self, settings_dict: dict):
         """Define DearPyGui data sources"""
         # Define theme names, for later use.
-        print("Entering set_vars")  # DEBUG
+        log("Entering my_gui.set_vars")
         self.themes = ["Dark", "Light", "Classic", "Dark 2", "Grey",
                        "Dark Grey", "Cherry", "Purple", "Gold", "Red"]
         self.log_levels = ["Trace", "Debug", "Info", "Warning", "Error", "Off"]
@@ -36,20 +36,17 @@ class my_gui():
 
     @staticmethod
     def apply_theme(sender, data):
-        print("Entering apply_theme")  # DEBUG
         theme = get_value(" ##Themes")
         set_theme(theme)
 
     @staticmethod
     def set_logger_level(sender, data):
-        print("Entering set_logger_level")  # DEBUG
         level = get_value("Log Level##logging")
         set_log_level(level)
 
     @staticmethod
     def reset_max(sender, data):
         """Reset max CPU and GPU temperature records and update table"""
-        print("Entering reset_max")  # DEBUG
         add_data("maxCPU", 0)
         add_data("maxGPU", 0)
         set_table_item(mytable, 1, 1, "0")
@@ -58,7 +55,6 @@ class my_gui():
     @staticmethod
     def reset_plot(sender, data):
         """Clear plot and reset associated variables"""
-        print("Entering reset_plot")  # DEBUG
         clear_plot(myplot)
         add_data("CPU Temp", [])
         add_data("GPU Temp", [])
@@ -72,23 +68,17 @@ class my_gui():
     @staticmethod
     def plot_callback(sender, data):
         """Update plot and table data every 1 second"""
-        print("Entering plot_callback")  # DEBUG
         # get the last time the callback updated the data
         lastTime = get_data("timeCounter")
-        print(f"{lastTime = }")
-
-        totalTime = get_total_time()
-        print(f"{totalTime = }")
         
         # if it has been >= 1 second since last update, do another update.
         # otherwise, exit.
         if get_total_time() - lastTime >= 1:
-            print("Enter main logic loop")  # DEBUG
+            log("Entering main logic loop")
             # get the number of frames that have been rendered and increment it
             frame_count = get_data("frameCount")
-            print(f"{frame_count = }")
+            log(f"{frame_count = }")
             frame_count += 1
-            print(f"{frame_count = }")
             # grab current CPU and GPU temp
             current_cpu, current_gpu = ohm.get_cpu(), ohm.get_gpu()
 
@@ -143,11 +133,10 @@ class my_gui():
             add_data("GPU Temp", gpu_data)
             add_data("timeCounter", get_total_time())
         else:
-            print("Skipping main logic loop")  # DEBUG
+            log("Skipping main logic loop")
 
     @staticmethod
     def warning_manually_toggled(sender, data):
-        print("Entering warning_manually_toggled")  # DEBUG
         log_info("Warning manually toggled.")
 
     @staticmethod
@@ -161,7 +150,7 @@ class my_gui():
             temps (dict):
                 takes a dictionary of format {sensor(str), temperature(float)}
         """
-        print("Entering thresh_check")  # DEBUG
+        log("Beginning thresh_check")
         warning_cleared = get_data("is_warning_cleared")
         for sensor, value in temps.items():
             if value > threshold:
@@ -176,7 +165,7 @@ class my_gui():
                 elif not warning_cleared:
                     log_info("Temp still above threshold. Warning not cleared. Notification cancelled.")
             else:
-                log("Threshold check cleared.")
+                log_info(f"Threshold check cleared. {sensor} is at {value}")
                 if not warning_cleared:
                     log_info("Warning cleared by system.")
                 add_data("is_warning_cleared", True)
@@ -184,7 +173,6 @@ class my_gui():
 
     def make_gui(self):
         """Define the GUI layout and its data sources."""
-        print("Entering make_gui")  # DEBUG
 
         # some window formality
         set_main_window_title("TempMon")
@@ -251,5 +239,4 @@ class my_gui():
 
     def start_gui(self):
         """Method to expose start_dearpygui()"""
-        print("Entering start_gui")  # DEBUG
         start_dearpygui()

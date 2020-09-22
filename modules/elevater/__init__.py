@@ -1,4 +1,5 @@
 import ctypes
+import sys
 from elevate import elevate
 
 
@@ -6,13 +7,11 @@ def elevater():
     if ctypes.windll.shell32.IsUserAnAdmin():
         pass
     else:
-        print("Not elevated.")
-        elevate()
-        # make sure it was successful.
-        if ctypes.windll.shell32.IsUserAnAdmin():
+        print("Not elevated. Attempting UAC elevation.")
+        try:
+            elevate()
             print("Elevation successful.")
-        else:
+        except OSError:
             print("Elevation failed.")
             print("Exiting with sys code: 1")
-            print("But not actually, because I'm debugging")
-            # sys.exit(1)
+            sys.exit(1)

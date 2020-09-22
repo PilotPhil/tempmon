@@ -1,4 +1,10 @@
 # tempmon
-A simple GUI to monitor CPU and GPU temperatures
+A simple CPU and GPU temperature monitor. 
 
-Note: Must be run as administrator.
+---
+
+## Usage
+
+
+
+Note: Must be run as administrator. Will ask for UAC elevation before running.
