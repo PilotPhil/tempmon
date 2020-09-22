@@ -12,10 +12,10 @@ Windows seems to require Administrator rights in order to read CPU and GPU tempe
 
 From a PowerShell or Command Prompt, enter the main tempmon directory and run:
 
-```> python.exe main.py```
+```> python.exe tempmon.py```
 
 If run as a regular user, the system will prompt for UAC permissions, and spawn a new terminal window with elevated rights. 
 
 To run tempmon in the background, run:
 
-```> pythonw.exe main.py```
+```> pythonw.exe tempmon.py```
