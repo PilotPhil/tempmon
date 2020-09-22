@@ -263,7 +263,7 @@ class my_gui():
         add_same_line()
 
         # add plot
-        add_plot(myplot, "Time", "Temp")
+        add_plot(myplot, "Time (seconds)", "Temp")
 
         # set plot limits
         set_plot_xlimits(myplot, 0, 100)
