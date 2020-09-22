@@ -2,7 +2,7 @@ import json
 
 class settings():
     def __init__(self, config_file=r'assets/config.json'):
-        self.values = {"threshold":90, "theme":"Gold"}
+        self.values = {"cpu_threshold": 90, "gpu_threshold": 90, "theme": "Gold"}
         self.config_file = config_file
 
 
