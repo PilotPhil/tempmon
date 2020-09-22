@@ -1,4 +1,8 @@
 .env
 .vscode/
+__pycache__/
 __pycache__/*
-.pyc
+modules/ohm/OpenHardwareMonitorLib.sys
+.vscode/settings.json
+.vscode/settings.json
+tempmon.code-workspace
