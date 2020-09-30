@@ -3,7 +3,7 @@ A simple CPU and GPU temperature monitor.
 
 Windows seems to require Administrator rights in order to read CPU and GPU temperatures.
 
- 
+![Screenshot of tempmon](screenshots/screenshot_1.png "Screenshot of tempmon")
 
 ---
 
