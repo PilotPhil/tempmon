@@ -7,3 +7,4 @@ modules/ohm/OpenHardwareMonitorLib.sys
 .vscode/settings.json
 *.code-workspace
 notes.md
+dist/*
