@@ -25,3 +25,4 @@ To run tempmon in the background, run:
 ## TODO
 
 -  [x] Add ability to save custom threshold.
+-  [ ] Discord bot
