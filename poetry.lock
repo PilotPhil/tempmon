@@ -1,0 +1,69 @@
+[[package]]
+name = "dearpygui"
+version = "0.3.6"
+description = "DearPyGui: A simple Python GUI Toolkit"
+category = "main"
+optional = false
+python-versions = ">=3.7"
+
+[[package]]
+name = "elevate"
+version = "0.1.3"
+description = "Python library for requesting root privileges"
+category = "main"
+optional = false
+python-versions = "*"
+
+[[package]]
+name = "pycparser"
+version = "2.20"
+description = "C parser in Python"
+category = "main"
+optional = false
+python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
+
+[[package]]
+name = "pythonnet"
+version = "2.5.1"
+description = ".Net and Mono integration for Python"
+category = "main"
+optional = false
+python-versions = "*"
+
+[package.dependencies]
+pycparser = "*"
+
+[metadata]
+lock-version = "1.1"
+python-versions = "^3.8"
+content-hash = "7ea5729e547b6f1784d3fae47be374af696a58b2bbaa323e7577d393c9e1191e"
+
+[metadata.files]
+dearpygui = [
+    {file = "dearpygui-0.3.6-cp37-cp37m-macosx_10_6_x86_64.whl", hash = "sha256:43dfdee134a95539242b3e5b0df3bf3e12da62a3187f5208cf9546ecf49cd197"},
+    {file = "dearpygui-0.3.6-cp37-cp37m-manylinux1_x86_64.whl", hash = "sha256:6fb253cccaed81fe1936c194d27f523ba77fe3508f7ac570b476177131c362ac"},
+    {file = "dearpygui-0.3.6-cp37-cp37m-win_amd64.whl", hash = "sha256:0b8487ddb488fd049fa03a81c76e1eedaf42fb545b443a6a9f4d1dfeefd8388c"},
+    {file = "dearpygui-0.3.6-cp38-cp38-macosx_10_6_x86_64.whl", hash = "sha256:5312cab39960c00e3057f1feb4c4266d932976db6c26b292992708a8ce16155b"},
+    {file = "dearpygui-0.3.6-cp38-cp38-manylinux1_x86_64.whl", hash = "sha256:543503ba7cad1f8dcd7b750c4395537364ebc9eb6ce149afa33703261c61090f"},
+    {file = "dearpygui-0.3.6-cp38-cp38-win_amd64.whl", hash = "sha256:8e4fa848531ac18ff8faecbd49c457d28db3d9ad2e938d274d07fa976f14470d"},
+]
+elevate = [
+    {file = "elevate-0.1.3.tar.gz", hash = "sha256:53ad19fa1de301fb1de3f8768fb3a5894215716fd96a475690c4d0ff3b1de209"},
+]
+pycparser = [
+    {file = "pycparser-2.20-py2.py3-none-any.whl", hash = "sha256:7582ad22678f0fcd81102833f60ef8d0e57288b6b5fb00323d101be910e35705"},
+    {file = "pycparser-2.20.tar.gz", hash = "sha256:2d475327684562c3a96cc71adf7dc8c4f0565175cf86b6d7a404ff4c771f15f0"},
+]
+pythonnet = [
+    {file = "pythonnet-2.5.1-cp27-cp27m-win32.whl", hash = "sha256:5d1ec84c7d1ec9d31350383bb4832ef51a916e43cae11d7f7fc127985f62ab6c"},
+    {file = "pythonnet-2.5.1-cp27-cp27m-win_amd64.whl", hash = "sha256:6fb41f0b9f3cd9a7ad581e6c817ad44e8ba7cd9ee4b91bbb7718fd85284b0c65"},
+    {file = "pythonnet-2.5.1-cp35-cp35m-win32.whl", hash = "sha256:3555c3a1ed5e7359d156043e1b4a4db2c6ae90fad0e8c70547af01e76c86f374"},
+    {file = "pythonnet-2.5.1-cp35-cp35m-win_amd64.whl", hash = "sha256:faa3c2a90aadce92bfb28570830b498954243eb5c6907d41e9dcbd936ec9ca52"},
+    {file = "pythonnet-2.5.1-cp36-cp36m-win32.whl", hash = "sha256:f0cd76232072b15bba4459cbf9475d81348065ac120e20c301d2593621dd0a76"},
+    {file = "pythonnet-2.5.1-cp36-cp36m-win_amd64.whl", hash = "sha256:6b808b3278395f2a2b166844d6b23032f28cda22e5296d2e57a8ecd38cb0d554"},
+    {file = "pythonnet-2.5.1-cp37-cp37m-win32.whl", hash = "sha256:93065007501edbe9a97dff1dbb041eeb8f3c1551d469070761b7a75c24308fa2"},
+    {file = "pythonnet-2.5.1-cp37-cp37m-win_amd64.whl", hash = "sha256:6bbf050084224d54da7aeb6a90f068e90ae4d3750248700aa0acab7d657df8cd"},
+    {file = "pythonnet-2.5.1-cp38-cp38-win32.whl", hash = "sha256:71d5af9205a6f872e654b21a4f77fb2385aa9feff8760057c0518dc470f19d6f"},
+    {file = "pythonnet-2.5.1-cp38-cp38-win_amd64.whl", hash = "sha256:c1db9edf41489c1227746cf6382bd087e08b494632010a6bead92984f000a4bf"},
+    {file = "pythonnet-2.5.1.tar.gz", hash = "sha256:b4e876e0ddb52c7ce187c1abf529ef1e419743af283fde9d5769c798cf4b078f"},
+]

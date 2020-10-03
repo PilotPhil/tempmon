@@ -1,0 +1,24 @@
+[tool.poetry]
+name = "tempmon"
+version = "0.4.0"
+description = "A simple CPU and GPU temperature monitor."
+license = "MIT"
+authors = ["cubic-unit <cadenblox@gmail.com>"]
+readme = "README.md"
+homepage = "https://github.com/cubic-unit/tempmon"
+repository = "https://github.com/cubic-unit/tempmon"
+
+[tool.poetry.dependencies]
+python = "^3.8"
+elevate = "^0.1.3"
+dearpygui = "0.3.6"
+pythonnet = "^2.5.1"
+
+[tool.poetry.dev-dependencies]
+
+[tool.poetry.scripts]
+
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
