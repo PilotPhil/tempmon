@@ -27,4 +27,3 @@ To run tempmon in the background, run:
 -  [x] Add ability to save custom threshold.
 -  [ ] Discord bot
 -  [ ] CPU/GPU load option
--  [ ] Again

@@ -36,7 +36,7 @@ pycparser = "*"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "85c40bed91127cfa065ab941b41985543273c35f377d9679fda2d39663451494"
+content-hash = "7ea5729e547b6f1784d3fae47be374af696a58b2bbaa323e7577d393c9e1191e"
 
 [metadata.files]
 dearpygui = [
