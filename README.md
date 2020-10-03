@@ -24,4 +24,4 @@ To run tempmon in the background, run:
 
 ## TODO
 
-- Add ability to save custom threshold.
+-  [x] Add ability to save custom threshold.
