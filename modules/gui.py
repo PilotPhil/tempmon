@@ -18,11 +18,11 @@ class gui():
         
         def attach(self, observer):
             self._observers.append(observer)
-            print(f"Attached observer.")
+            log(f"Attached observer.")
         
         def detach(self, observer):
             self._observers.remove(observer)
-            print(f"Detached observer.")
+            log(f"Detached observer.")
         
         def write_settings(self, settings):
             for observer in self._observers:
