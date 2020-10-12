@@ -14,8 +14,6 @@ python = "^3.8"
 elevate = "^0.1.3"
 dearpygui = "0.3.6"
 pythonnet = "^2.5.1"
-tmsettings = { path = "../modules/tmsettings", version = "^0.1.0" }
-my-gui = { path = "../modules/my-gui", version = "^0.1.0" }
 
 
 [tool.poetry.dev-dependencies]
