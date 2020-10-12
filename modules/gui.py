@@ -1,7 +1,7 @@
 __version__ = "0.1.0"
 
-from dearpygui.dearpygui import *
-from dearpygui.wrappers import *
+from dearpygui.core import *
+from dearpygui.simple import *
 import modules.ohm as ohm
 
 # initialize OpenHardwareMonitor
@@ -261,7 +261,7 @@ class gui():
 
             with menu("Theme"):
                 add_combo(" ##Themes",
-                          self.themes,
+                          items = self.themes,
                           default_value="Gold",
                           callback=self.apply_theme)  # theme selector
                 add_button("Save Theme", callback=self.save_theme)
@@ -273,7 +273,7 @@ class gui():
             with menu("Log Level"):
                 # logger level selector
                 add_radio_button("Log Level##logging",
-                                 self.log_levels,
+                                 items = self.log_levels,
                                  callback=self.set_logger_level,
                                  default_value=2)
 
@@ -281,8 +281,8 @@ class gui():
             
             with menu("Threshold"):
                 # Sliders to change threshold values. Updates DPG register automatically.
-                add_slider_float("CPU Threshold", data_source="cpu_threshold")
-                add_slider_float("GPU Threshold", data_source="gpu_threshold")
+                add_slider_float("CPU Threshold", source="cpu_threshold")
+                add_slider_float("GPU Threshold", source="gpu_threshold")
                 add_button("Save", callback=self.save_threshold)
 
         # begin left panel for table and buttons
@@ -295,18 +295,18 @@ class gui():
 
             # indicates if temperature warning has cleared
             add_checkbox("CPU Warning Cleared?",
-                         data_source="is_cpu_warning_cleared",
+                         source="is_cpu_warning_cleared",
                          callback=self.warning_manually_toggled)
 
             add_checkbox("GPU Warning Cleared?",
-                         data_source="is_gpu_warning_cleared",
+                         source="is_gpu_warning_cleared",
                          callback=self.warning_manually_toggled)
 
         # to align plot
         add_same_line()
 
         # add plot
-        add_plot(myplot, "Time (seconds)", "Temp")
+        add_plot(myplot, x_axis_name="Time (seconds)", y_axis_name="Temp")
 
         # set plot limits
         set_plot_xlimits(myplot, 0, 100)
