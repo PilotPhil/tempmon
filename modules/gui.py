@@ -55,34 +55,8 @@ class gui():
         add_data("is_cpu_warning_cleared", True)
         add_data("is_gpu_warning_cleared", True)
 
-        # And attach the passed observer to settings subject
-        # Gonna make a new settings instance, and then pass to it.
-        # Pretty sure this is unnecessary, so I may refactor it later.
+        # And attach the passed observer to class's settings subject
         self.settings().attach(_settings_handler)
-
-
-    # def set_vars(self, settings_dict: dict):
-    #     """Define DearPyGui data sources"""
-    #     # Define theme names, for later use.
-    #     log("Entering my_gui.set_vars")
-    #     self.themes = ["Dark", "Light", "Classic", "Dark 2", "Grey",
-    #                    "Dark Grey", "Cherry", "Purple", "Gold", "Red"]
-    #     self.log_levels = ["Trace", "Debug", "Info", "Warning", "Error", "Off"]
-
-    #     # Set theme, based on settings passed via argument
-    #     set_theme(settings_dict["theme"])
-
-    #     # define DPG data
-    #     add_data("CPU Temp", [])
-    #     add_data("GPU Temp", [])
-    #     add_data("frameCount", 0)
-    #     add_data("timeCounter", get_total_time())
-    #     add_data("maxCPU", 0)
-    #     add_data("maxGPU", 0)
-    #     add_data("cpu_threshold", settings_dict["cpu_threshold"])
-    #     add_data("gpu_threshold", settings_dict["gpu_threshold"])
-    #     add_data("is_cpu_warning_cleared", True)
-    #     add_data("is_gpu_warning_cleared", True)
 
     @staticmethod
     def apply_theme(sender, data):
