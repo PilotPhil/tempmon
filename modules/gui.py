@@ -168,7 +168,7 @@ class gui():
             add_data("GPU Temp", gpu_data)
             add_data("timeCounter", get_total_time())
         else:
-            log("Skipping main logic loop")
+            pass
 
     @staticmethod
     def warning_manually_toggled(sender, data):
@@ -252,17 +252,12 @@ class gui():
         myplot = "CPU and GPU Temperatures"
         mytable = "Current Temps"
 
-        # Define theme names, for later use.
-        # themes = ["Dark", "Light", "Classic", "Dark 2", "Grey",
-        #           "Dark Grey", "Cherry", "Purple", "Gold", "Red"]
-        # log_levels = ["Trace", "Debug", "Info", "Warning", "Error", "Off"]
-
         with menu_bar("Menu Bar"):
 
             with menu("Theme"):
                 add_combo(" ##Themes",
                           items = self.themes,
-                          default_value="Gold",
+                          default_value=get_theme(),
                           callback=self.apply_theme)  # theme selector
                 add_button("Save Theme", callback=self.save_theme)
 
