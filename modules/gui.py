@@ -1,3 +1,5 @@
+__version__ = "0.1.0"
+
 from dearpygui.dearpygui import *
 from dearpygui.wrappers import *
 import modules.ohm as ohm
