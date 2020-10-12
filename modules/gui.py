@@ -213,11 +213,12 @@ class gui():
                 log_debug(f"{sensor} has not dropped 5\u00B0C below threshold. Warning not cleared.")
             else:
                 log_info(f"{sensor} threshold check cleared. {sensor} is at {value}\u00B0C")
-                if not warnings_cleared[sensor]:
+                if warnings_cleared[sensor] == False:
                     # log_info("Warning cleared by system.")
                     if sensor == 'CPU':
                         log_info("CPU warning cleared by system.")
                         add_data("is_cpu_warning_cleared", True)
+                        log_debug(f"{get_data('is_cpu_warning_cleared') = }")
                     elif sensor == 'GPU':
                         log_info("GPU warning cleared by system")
                         add_data("is_gpu_warning_cleared", True)
@@ -276,8 +277,8 @@ class gui():
             
             with menu("Threshold"):
                 # Sliders to change threshold values. Updates DPG register automatically.
-                add_slider_float("CPU Threshold", source="cpu_threshold")
-                add_slider_float("GPU Threshold", source="gpu_threshold")
+                add_slider_float("CPU Threshold", default_value=get_data("cpu_threshold"), source="cpu_threshold")
+                add_slider_float("GPU Threshold", default_value=get_data("gpu_threshold"), source="gpu_threshold")
                 add_button("Save", callback=self.save_threshold)
 
         # begin left panel for table and buttons
