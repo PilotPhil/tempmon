@@ -28,8 +28,11 @@ class gui():
             for observer in self._observers:
                 observer.update(settings)
 
-    def __init__(self, settings_dict, settings_observer):
+    def __init__(self, _settings_handler):
         """Define DearPyGui data sources"""
+
+        # Get settings from file, using handler that was passed to __init__
+        settings_dict = _settings_handler.import_config()
 
         # Define theme names and log levels, for later use.
         log("Initializing gui.gui class.")
@@ -55,7 +58,7 @@ class gui():
         # And attach the passed observer to settings subject
         # Gonna make a new settings instance, and then pass to it.
         # Pretty sure this is unnecessary, so I may refactor it later.
-        self.settings().attach(settings_observer)
+        self.settings().attach(_settings_handler)
 
 
     # def set_vars(self, settings_dict: dict):

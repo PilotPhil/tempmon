@@ -4,10 +4,11 @@ import elevate  # PyPi module for requesting administrator permissions
 import modules.gui as gui  # private module for GUI control
 import modules.tmsettings as tmsettings  # TempMon settings module
 
-def main():
-    # Elevate UAC
+def elevater():
+    # Check if already running as Windows Administrator
     if ctypes.windll.shell32.IsUserAnAdmin():
         pass
+    # If not, use the 'elevate' module to try to gain permission
     else:
         print("Not elevated. Attempting UAC elevation.")
         try:
@@ -17,22 +18,15 @@ def main():
             print("Exiting with sys code: 1")
             sys.exit(1)
 
+def main():
+    # Get UAC rights
+    elevater()
 
-    # Reading my config here and passing values to my gui as a dictionary
-    # ...but how do I pass it back to the settings writer?
-    # hm...
-    # loaded_settings = tmsettings.settings().import_config()
-    tm_settings_handle = tmsettings.settings()
+    # Create a handler for settings module
+    settings_handler = tmsettings.settings()
 
-    # Instatiate a settings observer and attach it to GUI subject
-    # sett_observer = tmsettings.Observer()
-    # g.settings().attach(sett_observer)
-
-    # # Send settings to GUI
-    # g.settings().set_vars(loaded_settings)
-
-    # Initialize gui, make handle, pass settings for init
-    g = gui.gui(tm_settings_handle.import_config(), tm_settings_handle)
+    # Initialize gui, pass the settings handler
+    g = gui.gui(settings_handler)
 
     # Define layout
     g.make_gui()
