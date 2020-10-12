@@ -48,12 +48,12 @@ class gui():
         add_data("GPU Temp", [])
         add_data("frameCount", 0)
         add_data("timeCounter", get_total_time())
-        add_data("maxCPU", 0)
-        add_data("maxGPU", 0)
-        add_data("cpu_threshold", settings_dict["cpu_threshold"])
-        add_data("gpu_threshold", settings_dict["gpu_threshold"])
-        add_data("is_cpu_warning_cleared", True)
-        add_data("is_gpu_warning_cleared", True)
+        add_value("maxCPU", 0)
+        add_value("maxGPU", 0)
+        add_value("cpu_threshold", settings_dict["cpu_threshold"])
+        add_value("gpu_threshold", settings_dict["gpu_threshold"])
+        add_value("is_cpu_warning_cleared", True)
+        add_value("is_gpu_warning_cleared", True)
 
         # And attach the passed observer to class's settings subject
         self.settings().attach(_settings_handler)
@@ -71,8 +71,8 @@ class gui():
     @staticmethod
     def reset_max(sender, data):
         """Reset max CPU and GPU temperature records and update table"""
-        add_data("maxCPU", 0)
-        add_data("maxGPU", 0)
+        add_value("maxCPU", 0)
+        add_value("maxGPU", 0)
         set_table_item(mytable, 1, 1, "0")
         set_table_item(mytable, 1, 2, "0")
 
@@ -119,8 +119,8 @@ class gui():
             gpu_data.append([frame_count, current_gpu])
 
             # Get current threshold values
-            curr_cpu_thresh = get_data("cpu_threshold")
-            curr_gpu_thresh = get_data("gpu_threshold")
+            curr_cpu_thresh = get_value("cpu_threshold")
+            curr_gpu_thresh = get_value("gpu_threshold")
 
             if len(cpu_data) > 100:
                 del cpu_data[0]  # Keep list size under 50
@@ -145,19 +145,19 @@ class gui():
 
             # if current temp is higher than recorded maximum,
             # overwrite DPG register and update table.
-            if current_cpu > get_data("maxCPU"):
-                add_data("maxCPU", current_cpu)
+            if current_cpu > get_value("maxCPU"):
+                add_value("maxCPU", current_cpu)
                 set_table_item(mytable, 1, 1, (str(int(current_cpu))))
-            if current_gpu > get_data("maxGPU"):
-                add_data("maxGPU", current_gpu)
+            if current_gpu > get_value("maxGPU"):
+                add_value("maxGPU", current_gpu)
                 set_table_item(mytable, 1, 2, (str(int(current_gpu))))
 
             # check if temp is above threshold.
             # Get thresholds for each sensor, pack them into a dictionary
             # Pack current temps into a dictionary.
             # Send both to my_gui.thresh_check()
-            cpu_threshold = get_data("cpu_threshold")
-            gpu_threshold = get_data("gpu_threshold")
+            cpu_threshold = get_value("cpu_threshold")
+            gpu_threshold = get_value("gpu_threshold")
             temps = {'CPU': current_cpu, 'GPU': current_gpu}
             thresholds = {'CPU': cpu_threshold, 'GPU': gpu_threshold}
             gui.thresh_check(thresholds, temps)
@@ -187,8 +187,8 @@ class gui():
 
         log("Beginning thresh_check")
 
-        cpu_warning_cleared = get_data("is_cpu_warning_cleared")
-        gpu_warning_cleared = get_data("is_gpu_warning_cleared")
+        cpu_warning_cleared = get_value("is_cpu_warning_cleared")
+        gpu_warning_cleared = get_value("is_gpu_warning_cleared")
 
         warnings_cleared = {'CPU': cpu_warning_cleared, 'GPU': gpu_warning_cleared}
         cpu_clear_thresh = thresholds['CPU'] - 5
@@ -204,9 +204,9 @@ class gui():
                     # notif.send(notif_string, " ")
                     log_warning(notif_string)
                     if sensor == 'CPU':
-                        add_data("is_cpu_warning_cleared", False)
+                        set_value("is_cpu_warning_cleared", False)
                     elif sensor == 'GPU':
-                        add_data("is_gpu_warning_cleared", False)
+                        add_value("is_gpu_warning_cleared", False)
                 elif not warnings_cleared[sensor]:
                     log_info(f"{sensor} temp still above threshold. Warning not cleared.")
             elif value > (thresholds[sensor] - 5.0) and not warnings_cleared[sensor]:
@@ -217,20 +217,20 @@ class gui():
                     # log_info("Warning cleared by system.")
                     if sensor == 'CPU':
                         log_info("CPU warning cleared by system.")
-                        add_data("is_cpu_warning_cleared", True)
-                        log_debug(f"{get_data('is_cpu_warning_cleared') = }")
+                        set_value("is_cpu_warning_cleared", True)
+                        log_debug(f"{get_value('is_cpu_warning_cleared') = }")
                     elif sensor == 'GPU':
                         log_info("GPU warning cleared by system")
-                        add_data("is_gpu_warning_cleared", True)
+                        add_value("is_gpu_warning_cleared", True)
 
     def update_threshold(self, sender, data):
         settings_dict = {"cpu_threshold": 70, "gpu_threshold": 70, "theme": "Gold"}
         self.settings().write_settings(settings_dict)
 
     def save_threshold(self, sender, data):
-        # cpu_threshold = get_data("cpu_threshold")
+        # cpu_threshold = get_value("cpu_threshold")
 
-        settings_dict = {"cpu_threshold": get_data("cpu_threshold"), "gpu_threshold": get_data("gpu_threshold")}
+        settings_dict = {"cpu_threshold": get_value("cpu_threshold"), "gpu_threshold": get_value("gpu_threshold")}
         self.settings().write_settings(settings_dict)
     
     def save_theme(self, sender, data):
@@ -247,7 +247,7 @@ class gui():
         set_window_pos("logger##standard", 250, 30)
 
         # Set logger level to "Info"
-        set_log_level(2)
+        set_log_level(0)
 
         # define plot and table names, just for convenience.
         myplot = "CPU and GPU Temperatures"
@@ -277,8 +277,8 @@ class gui():
             
             with menu("Threshold"):
                 # Sliders to change threshold values. Updates DPG register automatically.
-                add_slider_float("CPU Threshold", default_value=get_data("cpu_threshold"), source="cpu_threshold")
-                add_slider_float("GPU Threshold", default_value=get_data("gpu_threshold"), source="gpu_threshold")
+                add_slider_float("CPU Threshold", default_value=get_value("cpu_threshold"), source="cpu_threshold")
+                add_slider_float("GPU Threshold", default_value=get_value("gpu_threshold"), source="gpu_threshold")
                 add_button("Save", callback=self.save_threshold)
 
         # begin left panel for table and buttons
