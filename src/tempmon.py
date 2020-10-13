@@ -1,3 +1,5 @@
+__version__ = "0.5.0-alpha.0"
+
 import sys
 import ctypes   # Used to check for administrator permissions on Windows
 import elevate  # PyPi module for requesting administrator permissions

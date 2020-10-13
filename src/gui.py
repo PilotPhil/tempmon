@@ -1,4 +1,4 @@
-__version__ = "0.1.0"
+__version__ = "0.5.0-alpha.0"
 
 from dearpygui.core import *
 from dearpygui.simple import *
