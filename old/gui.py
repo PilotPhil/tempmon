@@ -11,19 +11,20 @@ ohm = ohm.helper()
 myplot = "CPU and GPU Temperatures"
 mytable = "Current Temps"
 
-class gui():
-    class settings():
-        
+
+class gui:
+    class settings:
+
         _observers = []
-        
+
         def attach(self, observer):
             self._observers.append(observer)
             log(f"Attached observer.")
-        
+
         def detach(self, observer):
             self._observers.remove(observer)
             log(f"Detached observer.")
-        
+
         def write_settings(self, settings):
             for observer in self._observers:
                 observer.update(settings)
@@ -36,8 +37,18 @@ class gui():
 
         # Define theme names and log levels, for later use.
         log("Initializing gui.gui class.")
-        self.themes = ["Dark", "Light", "Classic", "Dark 2", "Grey",
-                       "Dark Grey", "Cherry", "Purple", "Gold", "Red"]
+        self.themes = [
+            "Dark",
+            "Light",
+            "Classic",
+            "Dark 2",
+            "Grey",
+            "Dark Grey",
+            "Cherry",
+            "Purple",
+            "Gold",
+            "Red",
+        ]
         self.log_levels = ["Trace", "Debug", "Info", "Warning", "Error", "Off"]
 
         # Set theme, based on settings passed via argument
@@ -94,7 +105,7 @@ class gui():
         """Update plot and table data every 1 second"""
         # get the last time the callback updated the data
         lastTime = get_data("timeCounter")
-        
+
         # if it has been >= 1 second since last update, do another update.
         # otherwise, exit.
         if get_total_time() - lastTime >= 1:
@@ -141,7 +152,7 @@ class gui():
             # available frame_count in cpu_data.
             # data is trimmed to 100 records, so
             # keep the most recent 100 plot points in view.
-            set_plot_xlimits(myplot, cpu_data[0][0], cpu_data[0][0]+100)
+            set_plot_xlimits(myplot, cpu_data[0][0], cpu_data[0][0] + 100)
 
             # if current temp is higher than recorded maximum,
             # overwrite DPG register and update table.
@@ -158,8 +169,8 @@ class gui():
             # Send both to my_gui.thresh_check()
             cpu_threshold = get_value("cpu_threshold")
             gpu_threshold = get_value("gpu_threshold")
-            temps = {'CPU': current_cpu, 'GPU': current_gpu}
-            thresholds = {'CPU': cpu_threshold, 'GPU': gpu_threshold}
+            temps = {"CPU": current_cpu, "GPU": current_gpu}
+            thresholds = {"CPU": cpu_threshold, "GPU": gpu_threshold}
             gui.thresh_check(thresholds, temps)
 
             # update DPG register with all updated data
@@ -190,9 +201,9 @@ class gui():
         cpu_warning_cleared = get_value("is_cpu_warning_cleared")
         gpu_warning_cleared = get_value("is_gpu_warning_cleared")
 
-        warnings_cleared = {'CPU': cpu_warning_cleared, 'GPU': gpu_warning_cleared}
-        cpu_clear_thresh = thresholds['CPU'] - 5
-        gpu_clear_thresh = thresholds['GPU'] - 5
+        warnings_cleared = {"CPU": cpu_warning_cleared, "GPU": gpu_warning_cleared}
+        cpu_clear_thresh = thresholds["CPU"] - 5
+        gpu_clear_thresh = thresholds["GPU"] - 5
 
         for sensor, value in temps.items():
             log(f"{sensor} at {value}, {warnings_cleared[sensor] = }")
@@ -203,23 +214,29 @@ class gui():
                     notif_string = f"Temp Warning: {sensor} at {value}\u00B0C"
                     # notif.send(notif_string, " ")
                     log_warning(notif_string)
-                    if sensor == 'CPU':
+                    if sensor == "CPU":
                         set_value("is_cpu_warning_cleared", False)
-                    elif sensor == 'GPU':
+                    elif sensor == "GPU":
                         add_value("is_gpu_warning_cleared", False)
                 elif not warnings_cleared[sensor]:
-                    log_info(f"{sensor} temp still above threshold. Warning not cleared.")
+                    log_info(
+                        f"{sensor} temp still above threshold. Warning not cleared."
+                    )
             elif value > (thresholds[sensor] - 5.0) and not warnings_cleared[sensor]:
-                log_debug(f"{sensor} has not dropped 5\u00B0C below threshold. Warning not cleared.")
+                log_debug(
+                    f"{sensor} has not dropped 5\u00B0C below threshold. Warning not cleared."
+                )
             else:
-                log_info(f"{sensor} threshold check cleared. {sensor} is at {value}\u00B0C")
+                log_info(
+                    f"{sensor} threshold check cleared. {sensor} is at {value}\u00B0C"
+                )
                 if warnings_cleared[sensor] == False:
                     # log_info("Warning cleared by system.")
-                    if sensor == 'CPU':
+                    if sensor == "CPU":
                         log_info("CPU warning cleared by system.")
                         set_value("is_cpu_warning_cleared", True)
                         log_debug(f"{get_value('is_cpu_warning_cleared') = }")
-                    elif sensor == 'GPU':
+                    elif sensor == "GPU":
                         log_info("GPU warning cleared by system")
                         add_value("is_gpu_warning_cleared", True)
 
@@ -230,9 +247,12 @@ class gui():
     def save_threshold(self, sender, data):
         # cpu_threshold = get_value("cpu_threshold")
 
-        settings_dict = {"cpu_threshold": get_value("cpu_threshold"), "gpu_threshold": get_value("gpu_threshold")}
+        settings_dict = {
+            "cpu_threshold": get_value("cpu_threshold"),
+            "gpu_threshold": get_value("gpu_threshold"),
+        }
         self.settings().write_settings(settings_dict)
-    
+
     def save_theme(self, sender, data):
         settings_dict = {"theme": get_theme()}
         self.settings().write_settings(settings_dict)
@@ -256,10 +276,12 @@ class gui():
         with menu_bar("Menu Bar"):
 
             with menu("Theme"):
-                add_combo(" ##Themes",
-                          items = self.themes,
-                          default_value=get_theme(),
-                          callback=self.apply_theme)  # theme selector
+                add_combo(
+                    " ##Themes",
+                    items=self.themes,
+                    default_value=get_theme(),
+                    callback=self.apply_theme,
+                )  # theme selector
                 add_button("Save Theme", callback=self.save_theme)
 
             with menu("Actions"):
@@ -268,17 +290,27 @@ class gui():
 
             with menu("Log Level"):
                 # logger level selector
-                add_radio_button("Log Level##logging",
-                                 items = self.log_levels,
-                                 callback=self.set_logger_level,
-                                 default_value=2)
+                add_radio_button(
+                    "Log Level##logging",
+                    items=self.log_levels,
+                    callback=self.set_logger_level,
+                    default_value=2,
+                )
 
                 add_button("Show Logger", callback=show_logger)  # shows logger
-            
+
             with menu("Threshold"):
                 # Sliders to change threshold values. Updates DPG register automatically.
-                add_slider_float("CPU Threshold", default_value=get_value("cpu_threshold"), source="cpu_threshold")
-                add_slider_float("GPU Threshold", default_value=get_value("gpu_threshold"), source="gpu_threshold")
+                add_slider_float(
+                    "CPU Threshold",
+                    default_value=get_value("cpu_threshold"),
+                    source="cpu_threshold",
+                )
+                add_slider_float(
+                    "GPU Threshold",
+                    default_value=get_value("gpu_threshold"),
+                    source="gpu_threshold",
+                )
                 add_button("Save", callback=self.save_threshold)
 
         # begin left panel for table and buttons
@@ -290,13 +322,17 @@ class gui():
                 add_row(mytable, ["Thresh:", 0, 0])
 
             # indicates if temperature warning has cleared
-            add_checkbox("CPU Warning Cleared?",
-                         source="is_cpu_warning_cleared",
-                         callback=self.warning_manually_toggled)
+            add_checkbox(
+                "CPU Warning Cleared?",
+                source="is_cpu_warning_cleared",
+                callback=self.warning_manually_toggled,
+            )
 
-            add_checkbox("GPU Warning Cleared?",
-                         source="is_gpu_warning_cleared",
-                         callback=self.warning_manually_toggled)
+            add_checkbox(
+                "GPU Warning Cleared?",
+                source="is_gpu_warning_cleared",
+                callback=self.warning_manually_toggled,
+            )
 
         # to align plot
         add_same_line()

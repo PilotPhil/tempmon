@@ -1,10 +1,11 @@
 __version__ = "0.5.0-alpha.0"
 
 import sys
-import ctypes   # Used to check for administrator permissions on Windows
+import ctypes  # Used to check for administrator permissions on Windows
 import elevate  # PyPi module for requesting administrator permissions
 import modules.gui as gui  # private module for GUI control
 import modules.tmsettings as tmsettings  # TempMon settings module
+
 
 def elevater():
     # Check if already running as Windows Administrator
@@ -19,6 +20,7 @@ def elevater():
             print("Elevation failed.")
             print("Exiting with sys code: 1")
             sys.exit(1)
+
 
 def main():
     # Get UAC rights
