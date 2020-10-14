@@ -2,7 +2,8 @@
 exclude =
     .git,
     __pycache__,
-    dist
+    dist,
+    old
 max-line-length = 88
 ignore = 
     # Ignore file not ending with newline
