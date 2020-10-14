@@ -9,3 +9,4 @@ modules/ohm/OpenHardwareMonitorLib.sys
 notes.md
 dist/*
 .vscode
+tempmon/tempmon.log

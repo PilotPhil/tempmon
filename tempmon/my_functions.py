@@ -17,14 +17,3 @@ def elevater():
         except OSError:
             log.critical("UAC elevation failed.")
             sys.exit(1)
-
-
-# Configure Twiggy
-def twiggy_setup(logfile):
-    ...
-
-
-# @click.command()
-# @click.option("-d", "--debug")
-# def set_verbose():
-#     log.basicConfig(level="DEBUG")

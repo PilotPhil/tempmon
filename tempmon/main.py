@@ -1,7 +1,8 @@
 __version__ = "0.5.0-alpha.0"
 
 import click
-from twiggy import quick_setup, log
+from twiggy import log
+from twiggy_setup import twiggy_setup
 import my_functions as my
 
 
@@ -18,22 +19,14 @@ import my_functions as my
     count=True,
     help="Output verbose logs. Use -vv for DEBUG level logs.",
 )
+@click.version_option()
 def main(logfile, verbosity):
+    # Configure logger
+    twiggy_setup(logfile, verbosity)
+
     # Get UAC rights
-    # my.elevater()
-    # set_verbose(1)
-    print(verbosity)
-    print(logfile)
-    pass
+    my.elevater()
 
-
-# def duh():
-#     print("duh")
-
-
-# main.add_command(mc.version)
-# main.add_option(mc.set_log_file)
-# main.add_option(mc.set_verbose)
 
 if __name__ == "__main__":
     main()
