@@ -10,7 +10,8 @@ import my_functions as my
 @click.option(
     "-l",
     "--logfile",
-    help="File to log output to. Uses STDOUT and STDERR if not specified.",
+    help="File to log output to. Uses STDERR if not specified.",
+    type=click.Path(dir_okay=False, writable=True),
 )
 @click.option(
     "-v",
