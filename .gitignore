@@ -1,5 +1,5 @@
 .env
-.vscode/*
+*/.vscode/*
 __pycache__/
 __pycache__/*
 modules/ohm/OpenHardwareMonitorLib.sys
@@ -8,3 +8,4 @@ modules/ohm/OpenHardwareMonitorLib.sys
 *.code-workspace
 notes.md
 dist/*
+.vscode

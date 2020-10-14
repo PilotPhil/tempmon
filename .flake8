@@ -4,3 +4,6 @@ exclude =
     __pycache__,
     dist
 max-line-length = 88
+ignore = 
+    # Ignore file not ending with newline
+    W292
