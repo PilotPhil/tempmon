@@ -7,6 +7,6 @@ exclude =
 max-line-length = 88
 ignore = 
     # Ignore file not ending with newline
-    W292.
+    W292,
     # Ignore unused imports
     F401
