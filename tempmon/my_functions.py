@@ -29,6 +29,8 @@ def caller_name(skip=2):
     name. skip=1 means "who calls me", skip=2 "who calls my caller" etc.
 
     An empty string is returned if skipped levels exceed stack height
+
+    Source: Stack Overflow — https://bit.ly/3o31hqi
     """
     stack = inspect.stack()
     start = 0 + skip
