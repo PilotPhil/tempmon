@@ -9,4 +9,6 @@ ignore =
     # Ignore file not ending with newline
     W292,
     # Ignore unused imports
-    F401
+    F401,
+    # Ignore missing placeholders for f-strings
+    F541

@@ -2,6 +2,7 @@ import click
 from twiggy import log
 import twiggy_setup
 import config
+import gui
 from ohm import Ohm
 import my_functions as my
 
@@ -37,17 +38,30 @@ def main(logfile, verbosity, config_file):
     elevater_logger = log.name("elevate")
     settings_logger = log.name("settings")
     ohm_logger = log.name("ohm")
+    gui_logger = log.name("gui")
+    gui_config_logger = log.name("gui_config")
 
     # Call elevater for UAC rights and pass its logger
     my.elevater(elevater_logger)
 
     # Create a settings instance, and pass the logger and config file to it.
-    settings = config.Config(settings_logger, config_file)
+    my_config = config.Config(settings_logger, config_file)
 
+    # Create a new OHM instance, and pass the logger to it
     ohm = Ohm(ohm_logger)
 
-    print(settings.get_config())
-    print(ohm.get_cpu_temp())
+    # Create a GUI instance, and pass the logger to it
+    g = gui.Gui(gui_logger, gui_config_logger, my_config)
+
+    # Register the config handler
+    # g.config.set_config_handler(my_config)
+    # gconfig = g.config(gui_config_logger)
+    # gconfig.set_config_handler(settings)
+    # print(gconfig.get_config())
+
+    g.make_gui()
+
+    g.start_gui()
 
 
 if __name__ == "__main__":
