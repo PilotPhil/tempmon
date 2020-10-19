@@ -14,6 +14,6 @@ def twiggy_setup(logfile=None, verbosity=0):
         ("main", log_levels[verbosity], None, main_output)
     )
 
-    log.name("twiggy_setup").fields(file=logfile, level=log_levels[verbosity]).debug(
+    log.name("twiggy_setup").fields(file=logfile, level=log_levels[verbosity]).info(
         f"Twiggy configured with log level {log_levels[verbosity]}."
     )

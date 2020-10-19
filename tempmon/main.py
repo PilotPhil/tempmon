@@ -1,9 +1,8 @@
-__version__ = "0.5.0-alpha.0"
-
 import click
 from twiggy import log
 import twiggy_setup
 import config
+from ohm import Ohm
 import my_functions as my
 
 
@@ -37,6 +36,7 @@ def main(logfile, verbosity, config_file):
     # Create logger instances
     elevater_logger = log.name("elevate")
     settings_logger = log.name("settings")
+    ohm_logger = log.name("ohm")
 
     # Call elevater for UAC rights and pass its logger
     my.elevater(elevater_logger)
@@ -44,9 +44,10 @@ def main(logfile, verbosity, config_file):
     # Create a settings instance, and pass the logger and config file to it.
     settings = config.Config(settings_logger, config_file)
 
-    settings.update_config()
+    ohm = Ohm(ohm_logger)
 
     print(settings.get_config())
+    print(ohm.get_cpu_temp())
 
 
 if __name__ == "__main__":

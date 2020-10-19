@@ -1,5 +1,3 @@
-__version__ = "0.5.0-alpha.0"
-
 import json
 from my_functions import caller_name
 
@@ -12,6 +10,9 @@ class Config:
         self.__log = logger
         self.__config_file = config_file
         self.__config_dict = {}
+
+        # Populate __config_dict
+        self.__import_config()
 
     def __import_config(self):
         """Reads private __config_file and updates private config_dict"""
@@ -32,6 +33,13 @@ class Config:
         """Updates private config file variable"""
         self.__config_file = config_file
         self.__log.debug(f"Config file set to: {self.__config_file}")
+
+    def import_config(self):
+        """Public function to re-import the config file."""
+        self.__log.debug(f"Config re-import requested by {caller_name()}.")
+        self.__log.debug(f"Current config: {json.dumps(config_dict)}")
+        self.__import_config()
+        self.__log.debug(f"Imported config: {json.dumps(config_dict)}")
 
     def get_config(self):
         """Public function to retrieve the current settings.
