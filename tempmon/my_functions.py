@@ -1,7 +1,7 @@
 import sys
 import ctypes
 import inspect
-from twiggy import log
+import arrow
 import elevate
 
 
@@ -13,7 +13,7 @@ def elevater(logger):
         logger.info("Already elevated. Continuing...")
     # If not, use the 'elevate' module to try to gain permission
     else:
-        log.warning("Not elevated. Attempting UAC elevation...")
+        logger.warning("Not elevated. Attempting UAC elevation...")
         try:
             elevate.elevate()
             logger.info("UAC elevation successful. Continuing...")
@@ -59,3 +59,31 @@ def caller_name(skip=2):
     del parentframe, stack
 
     return ".".join(name)
+
+
+class Sensor_grabber:
+    def __init__(self, logger, ohm):
+        self.__log = logger
+        self.__ohm = ohm
+        self.__cpu_temp = []
+        self.__gpu_temp = []
+
+    def __get_cpu_temp(self):
+        """Private function to get CPU temperature"""
+        pass
+
+    def __get_gpu_temp(self):
+        """Private function to get GPU temperature"""
+        pass
+
+    def update(self):
+        """Update internal variables with current sensor temps"""
+        pass
+
+    def monitor_temps(self):
+        """Function to update private temp variables every 1 second"""
+        pass
+
+    def get_temps(self):
+        """Retrieve current variable data"""
+        pass

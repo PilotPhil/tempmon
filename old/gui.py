@@ -1,5 +1,3 @@
-__version__ = "0.5.0-alpha.0"
-
 from dearpygui.core import *
 from dearpygui.simple import *
 import modules.ohm as ohm

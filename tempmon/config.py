@@ -37,9 +37,9 @@ class Config:
     def import_config(self):
         """Public function to re-import the config file."""
         self.__log.debug(f"Config re-import requested by {caller_name()}.")
-        self.__log.debug(f"Current config: {json.dumps(config_dict)}")
+        self.__log.debug(f"Current config: {json.dumps(self.__config_dict)}")
         self.__import_config()
-        self.__log.debug(f"Imported config: {json.dumps(config_dict)}")
+        self.__log.debug(f"Imported config: {json.dumps(self.__config_dict)}")
 
     def get_config(self):
         """Public function to retrieve the current settings.

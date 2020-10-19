@@ -15,13 +15,20 @@ Need this module to:
 
 class Gui:
     def __init__(self, logger, config_logger, config_handler):
+        # Assign logger to private object
         self.__log = logger
+
+        # Create instance of nested class, and pass logger and handler objects to it.
         self.config = self.Config(config_logger, config_handler)
+
         self.__log.debug(f"Initializing main GUI class...")
+
         self.__log.debug(f"Requesting config...")
         self.config_dict = self.config.get_config()
+
         self.__log.info(f"Setting current theme...")
         dc.set_theme(self.config_dict["theme"])
+
         self.__log.debug("Initializing theme variable.")
         self.themes = [
             "Dark",
@@ -63,8 +70,10 @@ class Gui:
 
             with ds.menu_bar("Menu"):
 
+                with ds.menu("File"):
+                    dc.add_menu_item("Select Config file")
                 with ds.menu("Options"):
-
+                    dc.add_menu_item("Preferences")
                     dc.add_combo("##Themes", items=self.themes)
 
             # add plot
