@@ -4,23 +4,23 @@ import json
 from my_functions import caller_name
 
 
-class Settings:
+class Config:
     """Class for reading and writing settings to JSON config file."""
 
     def __init__(self, logger, config_file=r"config.json"):
-        """Create private variables and defines internal logger instance."""
+        """Creates private variables and defines internal logger instance."""
         self.__log = logger
         self.__config_file = config_file
         self.__config_dict = {}
 
-    def __update_config(self):
-        """Reads class-scope __config_file and updates private config_dict"""
+    def __import_config(self):
+        """Reads private __config_file and updates private config_dict"""
         with open(self.__config_file, "r") as f:
             config = json.load(f)
             self.__config_dict.update(config)
 
     def __write_config(self, config_dict):
-        """Write config_dict to class-scope __config_file."""
+        """Writes config_dict to file defined by private __config_file variable."""
         with open(self.config_file, "w") as f:
             self.__config_dict.update(config_dict)
             json.dump(self.__config_dict, f)
@@ -33,13 +33,13 @@ class Settings:
         self.__config_file = config_file
         self.__log.debug(f"Config file set to: {self.__config_file}")
 
-    def update_config(self):
-        """Helper function to update private config_dict"""
-        self.__update_config()
-
     def get_config(self):
-        """Public function to retrieve the current settings"""
-        self.__log.debug(f"Config requested by {caller_name()}.")
+        """Public function to retrieve the current settings.
+
+        Runs __read, which updates internal __config_dict,
+        and then returns that updated variable.
+        """
+        self.__log.debug(f"Config requested by {caller_name()}")
         return self.__config_dict
 
     def write_config(self, config_dict):
@@ -51,3 +51,11 @@ class Settings:
             "update_config() called by {caller_name()}. Running __write_config()..."
         )
         self.__write_config(config_dict)
+
+    # Planning
+
+    # I need this to...
+    # - read the config from a file
+    # - write the config to a file
+    # - know which file IS the config file
+    # - return the config itself

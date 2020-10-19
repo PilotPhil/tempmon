@@ -42,7 +42,7 @@ def main(logfile, verbosity, config_file):
     my.elevater(elevater_logger)
 
     # Create a settings instance, and pass the logger and config file to it.
-    settings = config.Settings(settings_logger, config_file)
+    settings = config.Config(settings_logger, config_file)
 
     settings.update_config()
 
