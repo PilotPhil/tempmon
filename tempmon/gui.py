@@ -69,7 +69,7 @@ class Gui:
 
         # define plot and table names, just for convenience.
         myplot = "CPU and GPU Temperatures"
-        mytable = "Current Temps"
+        # mytable = "Current Temps"
 
         with ds.window("Main"):
 
