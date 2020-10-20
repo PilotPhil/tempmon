@@ -132,9 +132,9 @@ class gui:
             curr_gpu_thresh = get_value("gpu_threshold")
 
             if len(cpu_data) > 100:
-                del cpu_data[0]  # Keep list size under 50
+                del cpu_data[0]  # Keep list size under 100
             if len(gpu_data) > 100:
-                del gpu_data[0]  # Keep list size under 50
+                del gpu_data[0]  # Keep list size under 100
 
             # update plot
             add_line_series(myplot, "Intel", cpu_data, color=[0, 0, 255, 255])
