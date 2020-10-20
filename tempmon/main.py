@@ -1,3 +1,5 @@
+from time import sleep
+from threading import Thread
 import click
 from twiggy import log
 import twiggy_setup
@@ -40,6 +42,7 @@ def main(logfile, verbosity, config_file):
     ohm_logger = log.name("ohm")
     gui_logger = log.name("gui")
     gui_config_logger = log.name("gui_config")
+    sg_logger = log.name("sensor_grabber")
 
     # Call elevater for UAC rights and pass its logger
     my.elevater(elevater_logger)
@@ -50,14 +53,17 @@ def main(logfile, verbosity, config_file):
     # Create a new OHM instance, and pass the logger to it
     ohm = Ohm(ohm_logger)
 
-    # Create a GUI instance, and pass the logger to it
-    g = gui.Gui(gui_logger, gui_config_logger, my_config)
+    # Create Sensor_grabber
+    sg = my.Sensor_grabber(sg_logger, ohm)
+    # Define the monitor_temps() function as a thread
+    monitor_thread = Thread(target=sg.monitor_temps)
+    # Set it to be a daemon, so that it will terminate when __main__ does.
+    monitor_thread.daemon = True
+    # And start it.
+    monitor_thread.start()
 
-    # Register the config handler
-    # g.config.set_config_handler(my_config)
-    # gconfig = g.config(gui_config_logger)
-    # gconfig.set_config_handler(settings)
-    # print(gconfig.get_config())
+    # Create a GUI instance, and pass the logger to it
+    g = gui.Gui(gui_logger, gui_config_logger, my_config, sg)
 
     g.make_gui()
 

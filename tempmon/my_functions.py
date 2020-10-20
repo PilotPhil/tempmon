@@ -1,5 +1,6 @@
 import sys
 import ctypes
+from time import sleep
 import inspect
 import arrow
 import elevate
@@ -82,8 +83,32 @@ class Sensor_grabber:
 
     def monitor_temps(self):
         """Function to update private temp variables every 1 second"""
-        pass
+        while True:
+            # Log that this is still running
+            self.__log.debug(f"monitor_temps() running...")
+
+            # If the data set is larger than 100, delete the first record
+            if len(self.__cpu_temp) > 100:
+                del self.__cpu_data[0]
+            if len(self.__gpu_temp) > 100:
+                del self.__gpu_temp[0]
+
+            # Get the current time, convert to local, and format for time only
+            newtime = arrow.utcnow().timestamp
+
+            # Get the current temperature values
+            newcpu = self.__ohm.get_cpu_temp()
+            newgpu = self.__ohm.get_gpu_temp()
+
+            # Link the time to the temperature, and append to private
+            # variables as a tuble
+            self.__cpu_temp.append((newtime, newcpu))
+            self.__gpu_temp.append((newtime, newgpu))
+
+            self.__log.info(f"{newtime = }, {newcpu = }, {newgpu = }")
+            # Wait for 1 second before retrieving new temp values again
+            sleep(1)
 
     def get_temps(self):
-        """Retrieve current variable data"""
-        pass
+        """Retrieve current temperature data as a pair of lists"""
+        return self.__cpu_temp, self.__gpu_temp
