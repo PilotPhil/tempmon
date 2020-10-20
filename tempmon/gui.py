@@ -1,5 +1,6 @@
 import dearpygui.core as dc
 import dearpygui.simple as ds
+from gui_callbacks import Callbacks, call
 
 
 """Planning:
@@ -14,7 +15,7 @@ Need this module to:
 
 
 class Gui:
-    def __init__(self, logger, config_logger, config_handler):
+    def __init__(self, logger, config_logger, config_handler, sensor_grabber):
         # Assign logger to private object
         self.__log = logger
 
@@ -42,6 +43,10 @@ class Gui:
             "Gold",
             "Red",
         ]
+
+        # Create a callbacks object
+        self.cb = Callbacks(self.__log.name("callbacks"))
+        self.cb.register_sg(sensor_grabber)
 
     class Config:
         def __init__(self, logger, handler):
@@ -77,11 +82,18 @@ class Gui:
                     dc.add_combo("##Themes", items=self.themes)
 
             # add plot
-            dc.add_plot(myplot, x_axis_name="Time (seconds)", y_axis_name="Temp")
+            dc.add_plot(
+                myplot,
+                x_axis_name="Time (seconds)",
+                y_axis_name="Temp",
+                xaxis_time=True,
+            )
 
             # set plot limits
-            dc.set_plot_xlimits(myplot, 0, 100)
+            # dc.set_plot_xlimits(myplot, 0, 100)
             dc.set_plot_ylimits(myplot, 0, 100)
+
+        dc.set_render_callback(call(self.cb.render_callback))
 
     def start_gui(self):
         dc.start_dearpygui("Main")
