@@ -96,4 +96,4 @@ class Gui:
         dc.set_render_callback(call(self.cb.render_callback))
 
     def start_gui(self):
-        dc.start_dearpygui("Main")
+        dc.start_dearpygui(primary_window="Main")
