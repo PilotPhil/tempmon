@@ -12,7 +12,7 @@ __version__ = "0.2.0-alpha.0"
 
 import os
 import clr  # pip package 'pythonnet'
-from my_functions import caller_name
+from my_func import caller_name, Logger
 
 
 class Ohm:
@@ -46,7 +46,6 @@ class Ohm:
 
     def __init__(
         self,
-        logger,
         file=os.path.join(os.path.dirname(__file__), r"OpenHardwareMonitorLib.dll"),
         MainboardEnabled=False,
         CPUEnabled=True,
@@ -73,7 +72,6 @@ class Ohm:
             handle
                 an object that allows access to hardware information.
         """
-        self.__log = logger
 
         clr.AddReference(file)
 
@@ -87,7 +85,7 @@ class Ohm:
         self.handle.HDDEnabled = HDDEnabled
         self.handle.Open()
 
-        self.__log.info(f"OHM initialized.")
+        Logger.info(f"OHM initialized.")
 
     def get_cpu_temp(self) -> float:
         """Return current combined CPU Package temperature in Celsius."""
@@ -97,12 +95,12 @@ class Ohm:
             for sensor in i.Sensors:
                 if sensor.Name == "CPU Package":
                     if sensor.Value != None:
-                        self.__log.debug(
+                        Logger.debug(
                             f"CPU temp requested by {caller_name()}. Current: {sensor.Value}"
                         )
                         return float(sensor.Value)
                     else:
-                        self.__log.warning("CPU temp is 'None'")
+                        Logger.warning("CPU temp is 'None'")
                         return 0.0
 
     def get_gpu_temp(self) -> float:
@@ -115,10 +113,10 @@ class Ohm:
                     "GpuNvidia"
                 ) and sensor.SensorType == self.ohm_sensortypes.index("Temperature"):
                     if sensor.Value != None:
-                        self.__log.debug(
+                        Logger.debug(
                             f"GPU temp requested by {caller_name()}. Current: {sensor.Value}"
                         )
                         return float(sensor.Value)
                     else:
-                        self.__log.warning("GPU temp is 'None'")
+                        Logger.warning("GPU temp is 'None'")
                         return 0.0

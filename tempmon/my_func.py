@@ -1,25 +1,26 @@
 import sys
 import ctypes
 from time import sleep
+from twiggy import log
 import inspect
 import arrow
 import elevate
 
 
-def elevater(logger):
+def elevater():
     """Function to check for UAC permissions, and request them if not present."""
 
     # Check if already running as Windows Administrator
     if ctypes.windll.shell32.IsUserAnAdmin():
-        logger.info("Already elevated. Continuing...")
+        Logger.info("Already elevated. Continuing...")
     # If not, use the 'elevate' module to try to gain permission
     else:
-        logger.warning("Not elevated. Attempting UAC elevation...")
+        Logger.warning("Not elevated. Attempting UAC elevation...")
         try:
             elevate.elevate()
-            logger.info("UAC elevation successful. Continuing...")
+            Logger.info("UAC elevation successful. Continuing...")
         except OSError:
-            logger.critical("UAC elevation failed. Exiting with status code 1.")
+            Logger.critical("UAC elevation failed. Exiting with status code 1.")
             sys.exit(1)
 
 
@@ -63,8 +64,7 @@ def caller_name(skip=2):
 
 
 class Sensor_grabber:
-    def __init__(self, logger, ohm):
-        self.__log = logger
+    def __init__(self, ohm):
         self.__ohm = ohm
         self.__cpu_temp = []
         self.__gpu_temp = []
@@ -85,7 +85,7 @@ class Sensor_grabber:
         """Function to update private temp variables every 1 second"""
         while True:
             # Log that this is still running
-            self.__log.debug(f"monitor_temps() running...")
+            Logger.debug(f"Running...")
 
             # If the data set is larger than 100, delete the first record
             if len(self.__cpu_temp) > 100:
@@ -105,10 +105,47 @@ class Sensor_grabber:
             self.__cpu_temp.append((newtime, newcpu))
             self.__gpu_temp.append((newtime, newgpu))
 
-            self.__log.info(f"{newtime = }, {newcpu = }, {newgpu = }")
+            Logger.info(f"{newtime = }, {newcpu = }, {newgpu = }")
             # Wait for 1 second before retrieving new temp values again
             sleep(1)
 
     def get_temps(self):
         """Retrieve current temperature data as a pair of lists"""
         return self.__cpu_temp, self.__gpu_temp
+
+
+class Logger:
+    def new(name=caller_name()):
+        if name:
+            log.name("Logger").info(f"Logger issued to {name}")
+            return log.name(name)
+        else:
+            log.name("my.Logger").warning("Logger issued to IDLE")
+            print(caller_name())
+            return log.name("IDLE")
+
+    @staticmethod
+    def debug(msg):
+        log.name(str(caller_name())).debug(msg)
+
+    @staticmethod
+    def info(msg):
+        log.name(str(caller_name())).info(msg)
+
+    @staticmethod
+    def warning(msg):
+        log.name(str(caller_name())).warning(msg)
+
+    @staticmethod
+    def error(msg):
+        log.name(str(caller_name())).error(msg)
+
+    @staticmethod
+    def critical(msg):
+        log.name(str(caller_name())).critical(msg)
+
+
+def setup():
+    import twiggy_setup as ts
+
+    ts.twiggy_setup(None, 2)

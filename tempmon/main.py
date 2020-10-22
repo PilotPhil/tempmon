@@ -6,7 +6,7 @@ import twiggy_setup
 import config
 import gui
 from ohm import Ohm
-import my_functions as my
+import my_func as my
 
 
 @click.command()
@@ -36,25 +36,25 @@ def main(logfile, verbosity, config_file):
     # Configure twiggy with logfile and verbosity level
     twiggy_setup.twiggy_setup(logfile, verbosity)
 
-    # Create logger instances
-    elevater_logger = log.name("elevate")
-    settings_logger = log.name("settings")
-    ohm_logger = log.name("ohm")
-    gui_logger = log.name("gui")
-    gui_config_logger = log.name("gui_config")
-    sg_logger = log.name("sensor_grabber")
+    # # Create logger instances
+    # elevater_logger = log.name("elevate")
+    # settings_logger = log.name("settings")
+    # ohm_logger = log.name("ohm")
+    # gui_logger = log.name("gui")
+    # gui_config_logger = log.name("gui_config")
+    # sg_logger = log.name("sensor_grabber")
 
     # Call elevater for UAC rights and pass its logger
-    my.elevater(elevater_logger)
+    my.elevater()
 
     # Create a settings instance, and pass the logger and config file to it.
-    my_config = config.Config(settings_logger, config_file)
+    my_config = config.Config(config_file)
 
     # Create a new OHM instance, and pass the logger to it
-    ohm = Ohm(ohm_logger)
+    ohm = Ohm()
 
     # Create Sensor_grabber
-    sg = my.Sensor_grabber(sg_logger, ohm)
+    sg = my.Sensor_grabber(ohm)
     # Define the monitor_temps() function as a thread
     monitor_thread = Thread(target=sg.monitor_temps)
     # Set it to be a daemon, so that it will terminate when __main__ does.
@@ -63,7 +63,7 @@ def main(logfile, verbosity, config_file):
     monitor_thread.start()
 
     # Create a GUI instance, and pass the logger to it
-    g = gui.Gui(gui_logger, gui_config_logger, my_config, sg)
+    g = gui.Gui(my_config, sg)
 
     g.make_gui()
 

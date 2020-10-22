@@ -1,10 +1,16 @@
+from time import sleep
+import pendulum
 import dearpygui.core as dc
 import dearpygui.simple as ds
+from my_func import Logger
+
+last_run_time = pendulum.now()
+Logger.info(f"{last_run_time = }")
 
 
 class Callbacks:
-    def __init__(self, logger):
-        self.__log = logger
+    def __init__(self):
+        pass
 
     def register_sg(self, sg):
         self.__sg = sg
@@ -17,23 +23,42 @@ class Callbacks:
 
     # Alright, this guy is all fucked up.
     def render_callback(self, *args):
-        # update plot
-        cpu, gpu = self.__sg.get_temps()
-        self.__log.debug("render_callback started")
-        try:
-            self.__log.debug(f"render_callback got temps: {cpu[-1] = }, {gpu[-1] = }")
-        except IndexError:
-            self.__log.debug("cpu or gpu variable is empty.")
-        dc.add_line_series(
-            "CPU and GPU Temperatures", "Intel", cpu, color=[0, 0, 255, 255]
-        )
-        dc.add_line_series(
-            "CPU and GPU Temperatures", "NVIDIA", gpu, color=[0, 255, 0, 255]
-        )
-        try:
-            dc.set_plot_xlimits("CPU and GPU Temperatures", cpu[0][0], cpu[-1][0])
-        except IndexError:
-            self.__log.debug("cpu or gpu variable is empty.")
+        # # Wait for one second before continuing
+        # sleep(1)
+        # # Okay, well THAT didn't work so good.
+
+        global last_run_time
+        # now = pendulum.now()
+        # print(last_run_time)
+
+        # if last_run_time.add(seconds=1) > pendulum.now():
+        if last_run_time.diff(pendulum.now()).in_seconds() > 1:
+            # Update latest run time for the next loop
+            last_run_time = pendulum.now()
+            Logger.debug(f"{last_run_time = }, {pendulum.now() = }")
+            Logger.info("1 second since last temperature update. Running...")
+
+            # update plot
+            cpu, gpu = self.__sg.get_temps()
+            Logger.debug("Entering...")
+            try:
+                Logger.debug(f"Got temps: {cpu[-1] = }, {gpu[-1] = }")
+                Logger.debug(f"{len(cpu) = }, {len(gpu) = }")
+            except IndexError:
+                Logger.debug("'cpu' or 'gpu' variable is empty.")
+            dc.add_line_series(
+                "CPU and GPU Temperatures", "Intel", cpu, color=[0, 0, 255, 255]
+            )
+            dc.add_line_series(
+                "CPU and GPU Temperatures", "NVIDIA", gpu, color=[0, 255, 0, 255]
+            )
+            try:
+                dc.set_plot_xlimits("CPU and GPU Temperatures", cpu[0][0], cpu[-1][0])
+            except IndexError:
+                Logger.debug("'cpu' or 'gpu' variable is empty.")
+            Logger.debug("Exiting...")
+        else:
+            Logger.debug("Less than 1 second since last temperature update. Passing...")
 
 
 def call(instance_method):

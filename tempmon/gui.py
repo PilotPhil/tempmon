@@ -1,6 +1,8 @@
+from time import sleep
 import dearpygui.core as dc
 import dearpygui.simple as ds
 from gui_callbacks import Callbacks, call
+from my_func import Logger
 
 
 """Planning:
@@ -15,22 +17,20 @@ Need this module to:
 
 
 class Gui:
-    def __init__(self, logger, config_logger, config_handler, sensor_grabber):
-        # Assign logger to private object
-        self.__log = logger
+    def __init__(self, config_handler, sensor_grabber):
 
         # Create instance of nested class, and pass logger and handler objects to it.
-        self.config = self.Config(config_logger, config_handler)
+        self.config = self.Config(config_handler)
 
-        self.__log.debug(f"Initializing main GUI class...")
+        Logger.debug(f"Initializing main GUI class...")
 
-        self.__log.debug(f"Requesting config...")
+        Logger.debug(f"Requesting config...")
         self.config_dict = self.config.get_config()
 
-        self.__log.info(f"Setting current theme...")
+        Logger.info(f"Setting current theme...")
         dc.set_theme(self.config_dict["theme"])
 
-        self.__log.debug("Initializing theme variable.")
+        Logger.debug("Initializing theme variable.")
         self.themes = [
             "Dark",
             "Light",
@@ -45,21 +45,20 @@ class Gui:
         ]
 
         # Create a callbacks object
-        self.cb = Callbacks(self.__log.name("callbacks"))
+        self.cb = Callbacks()
         self.cb.register_sg(sensor_grabber)
 
     class Config:
-        def __init__(self, logger, handler):
-            self.__log = logger
+        def __init__(self, handler):
             self.__cfg_handler = handler
             self.__config_dict = {}
 
         def get_config(self):
-            self.__log.debug(f"Request to get config information received.")
+            Logger.debug(f"Request to get config information received.")
             return self.__cfg_handler.get_config()
 
         def write_config(self, config_dict):
-            self.__log.debug(f"Config write request received.")
+            Logger.debug(f"Config write request received.")
             self.__cfg_handler.write_config(config_dict)
 
     def make_gui(self):
