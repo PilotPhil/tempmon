@@ -1,9 +1,9 @@
 import sys
 import ctypes
+import pendulum
 from time import sleep
 from twiggy import log
 import inspect
-import arrow
 import elevate
 
 
@@ -89,12 +89,12 @@ class Sensor_grabber:
 
             # If the data set is larger than 100, delete the first record
             if len(self.__cpu_temp) > 100:
-                del self.__cpu_data[0]
+                del self.__cpu_temp[0]
             if len(self.__gpu_temp) > 100:
                 del self.__gpu_temp[0]
 
             # Get the current time, convert to local, and format for time only
-            newtime = arrow.utcnow().timestamp
+            newtime = pendulum.now().timestamp()
 
             # Get the current temperature values
             newcpu = self.__ohm.get_cpu_temp()
